@@ -1,0 +1,25 @@
+[project]
+name = "projeto-solar"
+version = "0.2.0"
+description = "um software que produz os documentos necessarios para uma homologacao de energia solar residencial/comercial/industrial"
+authors = [
+    {name = "Diego Canafistula",email = "diego.canafistula@gmail.com"}
+]
+license = {text = "GPL"}
+readme = "README.md"
+requires-python = ">=3.12, <4.0"
+dependencies = [
+    "reportlab (>=4.4.4,<5.0.0)",
+    "python-dateutil (>=2.9.0.post0,<3.0.0)",
+    "matplotlib (>=3.10.7,<4.0.0)",
+    "pymupdf (>=1.26.5,<2.0.0)",
+    "pydantic[email] (>=2.12.3,<3.0.0)",
+    "fastapi[standard] (>=0.122.0,<0.123.0)",
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,61 @@
+{
+    "cliente": {
+        "id_cliente": null,
+        "nome_cliente": "[NOME COMPLETO CLIENTE]",
+        "cpf": "[CPF CLIENTE]",
+        "data_nascimento": "[DATA NASCIMENTO]",
+        "razao_social": null,
+        "nome_fantasia": null,
+        "cnpj": null,
+        "rg": "1112121",
+        "telefone_cliente": "[TELEFONE CLIENTE]",
+        "email_cliente": "MAILCLIENTE@gmail.com.br"
+    },
+
+    "endereco_cliente": {
+        "logradouro_cliente": "[LOGRADOURO CLIENTE]",
+        "numero_casa_cliente": "[NUMERO CASA CLIENTE]",
+        "complemento_casa_cliente": "[COMPLEMENTO CASA CLIENTE]",
+        "cep_cliente": "[CEP CLIENTE]",
+        "bairro_cliente": "[BAIRRO DO CLIENTE]",
+        "cidade_cliente": "[CIDADE DO CLIENTE]",
+        "estado_cliente": "[ESTADO DO CLIENTE]"
+    },
+
+    "endereco_obra": {
+        "logradouro_obra": "[LOGRADOURO DA OBRA]",
+        "numero_obra": "[NUMERO DA OBRA]",
+        "complemento_obra": "[COMPLEMENTO DA OBRA]",
+        "cep_obra": "[CEP DA OBRA]",
+        "bairro_obra": "[BAIRRO DA OBRA]",
+        "cidade_obra": "CIDADE DA OBRA",
+        "estado_obra": "[ESTADO DA OBRA]",
+        "latitude_obra": null,
+        "longitude_obra": null
+    },
+
+
+    "projetista": {
+        "id_projetista": null,
+        "nome_projetista": "DIEGO CANAFISTULA",
+        "creci_projetista": "121212121",
+        "rubrica_projetista": "DT CANAFISTULA",
+        "telefone_projetista": "12121212",
+        "email_projetista": "projeto@email.com"
+    },  
+    "dados_procurador": {
+        "id_procurador": null,
+        "nome_procurador": "DIEGO CANAFISTULA",
+        "cpf_procurador": "1213141",
+        "rg_procurador": "121213414",
+        "telefone_procurador": "12121314",
+        "email_procurador": "diego.canafistula@gmail.com",
+        "logradouro_procurador": "12121 ",
+        "numero_casa_procurador": "125",
+        "complemento_procurador": "casa 4",
+        "cep_procurador": "60330270",
+        "bairro_procurador": "Jangurussu",
+        "cidade_procurador": "Fortaleza",
+        "estado_procurador": "ceara"
+    }
+}
