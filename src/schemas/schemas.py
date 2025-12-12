@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 
 from src.schemas.models import tensao_fase, classe_consumo, ramal_energia, tipo_inversor
 
-
+#################################### DADOS ENTRADA DO PROJETO ####################################
 class Cliente(BaseModel):
     id_cliente: int | None = None
     nome_cliente: str = "[NOME DO CLIENTE]"
@@ -35,28 +35,6 @@ class EnderecoObra(BaseModel):
     latitude_obra: str | None = None
     longitude_obra: str | None = None
 
-class Inversor(BaseModel):
-    id_inversor: int | None
-    marca_inversor: str = "[MARCA DO INVERSOR]"
-    modelo_inversor: str = "[MODELO DO INVERSOR]"
-    potencia_inversor: float =  0.0
-    numero_fases: tensao_fase = "monofasico"
-    tipo_de_inversor: tipo_inversor  = "string"
-    numero_mppt: int | None = 4 #reservado para atualizações futuras
-
-    
-
-class Placa(BaseModel):
-    id_placa: int | None
-    marca_placa: str = "[MARCA DA PLACA]"
-    modelo_placa: str   = "[MODELO DA PLACA]"
-    potencia_placa: float = 0.0
-    tipo_celula: str = "[TIPO DE CÉLULA DA PLACA]"
-    tensao_pico: float = 0.0
-    corrente_curtocircuito: float = 0.0
-    tensao_maxima_potencia: float = 0.0
-    corrente_maxima_potencia: float = 0.0
-    eficiencia_placa: float | None #reservado para atualizações futuras
 
 class Projetista(BaseModel):
     id_projetista: int | None = None
@@ -82,6 +60,31 @@ class Procurador(BaseModel):
     estado_procurador: str = "[ESTADO DO PROCURADOR]"
 
 
+##################### DADOS DE SISTEMA INSTALADO E PROJETO ########################### 
+class Inversor(BaseModel):
+    id_inversor: int | None
+    marca_inversor: str = "[MARCA DO INVERSOR]"
+    modelo_inversor: str = "[MODELO DO INVERSOR]"
+    potencia_inversor: float =  0.0
+    numero_fases: tensao_fase = "monofasico"
+    tipo_de_inversor: tipo_inversor  = "string"
+    numero_mppt: int | None = 4 #reservado para atualizações futuras
+
+    
+
+class Placa(BaseModel):
+    id_placa: int | None
+    marca_placa: str = "[MARCA DA PLACA]"
+    modelo_placa: str   = "[MODELO DA PLACA]"
+    potencia_placa: float = 0.0
+    tipo_celula: str = "[TIPO DE CÉLULA DA PLACA]"
+    tensao_pico: float = 0.0
+    corrente_curtocircuito: float = 0.0
+    tensao_maxima_potencia: float = 0.0
+    corrente_maxima_potencia: float = 0.0
+    eficiencia_placa: float | None #reservado para atualizações futuras
+
+    
 class QuantidadePlacas(BaseModel):
     quantidade_placas: int
     quantidade_placas2: int | None = None
@@ -116,7 +119,7 @@ class Projeto(BaseModel):
     sistema_instalado: list[ConfiguracaoSistema]
     #quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
 
-class ProjetoTeste(BaseModel):
+class ProjetoMemorial(BaseModel):
     model_config = {"use_enum_values": True}
     id_projeto: int | None
     numero_unidade_consumidora: str
@@ -129,3 +132,12 @@ class ProjetoTeste(BaseModel):
     data_projeto: str
 
     quantidade_sistemas_instalados: int = 1
+
+class ProjetoProcuracao(BaseModel):
+    model_config = {"use_enum_values": True}
+    id_projeto: int | None
+    
+    cliente: Cliente
+    endereco_cliente: EnderecoCliente
+    endereco_obra: EnderecoObra
+    procurador: Procurador

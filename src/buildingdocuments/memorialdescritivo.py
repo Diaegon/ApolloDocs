@@ -174,6 +174,7 @@ class MemorialDescritivo:
 
     def to_bytes(self):
         return self.buffer.getvalue()    
+    
     @staticmethod
     def linha_sumario(titulo, pagina, largura_pontilhado=80):
         """Retorna uma string formatada com pontilhado entre título e página"""

@@ -1,5 +1,5 @@
 from src.schemas.schemas import (Projeto, Cliente, EnderecoCliente, EnderecoObra,
-Inversor, Placa, Projetista, Procurador, ConfiguracaoSistema, ProjetoTeste)
+Inversor, Placa, Projetista, Procurador, ConfiguracaoSistema, ProjetoMemorial)
 
 #criação das classes de sistema isntalado
 class SistemaInstaladoFactory:
@@ -25,7 +25,7 @@ class SistemaInstaladoFactory:
         return ConfiguracaoSistema(**dados)
     
     @staticmethod
-    def build_sistema_instalado_list(inputs: ProjetoTeste, config_sistema: ConfiguracaoSistema) -> list[ConfiguracaoSistema]:
+    def build_sistema_instalado_list(inputs: ProjetoMemorial, config_sistema: ConfiguracaoSistema) -> list[ConfiguracaoSistema]:
         sistemas = []
         for i in range(1, inputs['quantidade_sistemas_instalados'] + 1):
             sistema = SistemaInstaladoFactory.instanciar_sistema_instalado_do_json(config_sistema, i)
