@@ -113,7 +113,7 @@ class ProjetoMemorial(BaseModel):
     data_projeto: str
 
     quantidade_sistemas_instalados: int = 1
-
+    
     sistema_instalado1: ConfiguracaoSistema
     sistema_instalado2: ConfiguracaoSistema | None = None
     sistema_instalado3: ConfiguracaoSistema | None = None   

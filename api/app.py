@@ -26,9 +26,17 @@ def landing_page():
 async def post_data_memorial(dados_entrada: ProjetoMemorial):
     projeto = ProjectFactory.factory(dados_entrada)
     
-    retorno = ObjetosCalculados(projeto).construtor_dados_memorial() #O OBJETO DE RETORNO É UM OBJ DATACLASS
+    print(projeto)
+    retorno = ObjetosCalculados(projeto) #O OBJETO DE RETORNO É UM OBJ DATACLASS
+    print("\n")
+    
+
+    retorno = retorno.construtor_dados_memorial()
     
     print(retorno)
+    print("\n")
+    print(type(retorno))
+    
 
     pdf = MemorialDescritivo(retorno)
     pdf.gerar_memorial()

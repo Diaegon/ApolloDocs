@@ -43,8 +43,8 @@ class ProjectFactory:
     @staticmethod
     def factory(inputs_projeto: ProjetoMemorial) -> ProjetoCompleto:
         sistema_instalado = SistemaInstaladoFactory.build_sistema_instalado_list(inputs_projeto)
-        dados = inputs_projeto.model_dump(exclude_none=True)
+        dados = inputs_projeto.model_dump(exclude_none=True, exclude={"sistema_instalado1", "sistema_instalado2", "sistema_instalado3"})
         return ProjetoCompleto(
-            dados,
+            **dados,
             sistema_instalado=sistema_instalado)
 

@@ -2,40 +2,40 @@ from dataclasses import dataclass, field
 from src.schemas.models import tensao_fase, classe_consumo, ramal_de_energia, tipo_inversor
 
 
-@dataclass
+@dataclass(init=False)
 class Cliente():
-    id_cliente: int | None = 1
-    nome_cliente: str = "diego"
-    cpf: str = "[CPF DO CLIENTE]"
-    data_nascimento: str = "[DATA DE NASCIMENTO DO CLIENTE]"
-    razao_social: str | None = "RAZÃO SOCIAL DO CLIENTE"
-    nome_fantasia: str | None = "NOME FANTASIA DO CLIENTE"
-    cnpj: str | None    = "[CNPJ DO CLIENTE]"
-    rg: str = "[RG DO CLIENTE]"
-    telefone_cliente: str = "[TELEFONE DO CLIENTE]"
-    email_cliente: str = "email@cliente.br"
+    id_cliente: int = 1 
+    nome_cliente: str 
+    cpf: str
+    data_nascimento: str 
+    razao_social: str 
+    nome_fantasia: str
+    cnpj: str 
+    rg: str 
+    telefone_cliente: str
+    email_cliente: str
 
 @dataclass
 class EnderecoCliente():
-    logradouro_cliente: str = "[LOGRADOURO DO CLIENTE]"
-    numero_casa_cliente: str = "[NÚMERO DA CASA DO CLIENTE]"
-    complemento_casa_cliente: str | None = " "
-    cep_cliente: str = "[CEP DO CLIENTE]"
-    bairro_cliente: str = "[BAIRRO DO CLIENTE]"
-    cidade_cliente: str = "[CIDADE DO CLIENTE]"
-    estado_cliente: str = "[ESTADO DO CLIENTE]"
+    logradouro_cliente: str 
+    numero_casa_cliente: str 
+    complemento_casa_cliente: str 
+    cep_cliente: str 
+    bairro_cliente: str 
+    cidade_cliente: str 
+    estado_cliente: str 
 
 @dataclass
 class EnderecoObra():
-    logradouro_obra: str = "[LOGRADOURO DA OBRA]"
-    numero_obra: str = "[NÚMERO DA OBRA]"
-    complemento_obra: str | None = " "
-    cep_obra: str = "[CEP DA OBRA]"
-    bairro_obra: str = "[BAIRRO DA OBRA]"
-    cidade_obra: str = "[CIDADE DA OBRA]"
-    estado_obra: str = "[ESTADO DA OBRA]"
-    latitude_obra: str = "[NONE]"
-    longitude_obra: str = "[NONE]"
+    logradouro_obra: str 
+    numero_obra: str 
+    complemento_obra: str
+    cep_obra: str 
+    bairro_obra: str 
+    cidade_obra: str
+    estado_obra: str 
+    latitude_obra: str
+    longitude_obra: str
 
 @dataclass
 class Projetista():
@@ -99,119 +99,117 @@ class ConfiguracaoSistema():
     placa2: Placa | None = None
 
 
-@dataclass 
+@dataclass() 
 class ProjetoCompleto():
-    id_projeto: int | None = 1
+    id_projeto: int 
     
-    numero_unidade_consumidora: str = "[NÚMERO DA UNIDADE CONSUMIDORA]"
-    carga_instalada_kw: float = 10.0
-    disjuntor_geral_amperes: float = 40.0
-    energia_media_mensal_kwh: float = 200.0
-    classe_consumo1: classe_consumo = classe_consumo.RESIDENCIAL
-    tipo_fornecimento: tensao_fase = tensao_fase.MONOFASICO
-    ramal_energia: ramal_de_energia = ramal_de_energia.AEREO
-    data_projeto: str = "[DATA DO PROJETO]"
-    quantidade_sistemas_instalados: int = 1
+    numero_unidade_consumidora: str 
+    carga_instalada_kw: float 
+    disjuntor_geral_amperes: float 
+    energia_media_mensal_kwh: float 
+    classe_consumo1: classe_consumo 
+    tipo_fornecimento: tensao_fase 
+    ramal_energia: ramal_de_energia
+    data_projeto: str 
+    quantidade_sistemas_instalados: int 
 
-    cliente: Cliente = field(default_factory=Cliente)
-    endereco_cliente : EnderecoCliente = field(default_factory=EnderecoCliente)
-    endereco_obra : EnderecoObra = field(default_factory=EnderecoObra)
-    projetista : Projetista = field(default_factory=Projetista)
-    procurador : Procurador = field(default_factory=Procurador)
+    cliente: Cliente
+    endereco_obra : EnderecoObra 
+ 
     
-    sistema_instalado: list = field(default_factory=list[ConfiguracaoSistema])
+    sistema_instalado: list 
 
     
 
     #quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
 
-@dataclass
+@dataclass()
 class RetornoProjetoCompleto():
     #memorial descritivo
     #endereço da obra
-    logradouro_obra: str | None = None
-    numero_obra: str | None = None
-    complemento_obra: str | None = None
-    bairro_obra: str | None = None
-    cidade_obra: str | None = None
-    estado_obra: str | None = None
-    cep_obra: str | None = None
-    data_hoje: str | None = None
-    data_futura: str | None = None
-    latitude_obra: float | None = None
-    longitude_obra: float | None = None
+    logradouro_obra: str 
+    numero_obra: str 
+    complemento_obra: str 
+    bairro_obra: str 
+    cidade_obra: str 
+    estado_obra: str 
+    cep_obra: str 
+    data_hoje: str 
+    data_futura: str 
+    latitude_obra: float 
+    longitude_obra: float 
     
     #dados cliente
-    nome_cliente: str | None = None
-    cpf: str | None = None
-    rg: str | None = None
-    razao_social: str | None = None
-    nome_fantasia: str | None = None 
-    cnpj: str | None = None 
-    telefone: str | None = None
-    email: str | None = None
-    data_nascimento: str | None = None 
+    nome_cliente: str 
+    cpf: str 
+    rg: str 
+    razao_social: str 
+    nome_fantasia: str  
+    cnpj: str  
+    telefone: str 
+    email: str 
+    data_nascimento: str  
     
     #dados elétricos do estabelecimento
-    classe_consumo: str | None = None
-    carga_instalada_kw: float | None = None
-    energia_media_mensal_kwh: float | None = None
-    tensao_local: int | None = None
-    tipo_fornecimento: str | None = None
-    disjuntor_geral: int | None = None
-    numero_uc: str | None = None
+    classe_consumo: str 
+    carga_instalada_kw: float 
+    energia_media_mensal_kwh: float 
+    tensao_local: int 
+    tipo_fornecimento: str 
+    disjuntor_geral: int 
+    numero_uc: str 
     
     #textos do memorial descritivo
-    texto_placas_memorial: str | None = None
-    texto_inversor_memorial: str | None = None
-    texto_potencia_placa: str | None = None
-    texto_tensao_individual_paineis: str | None = None
-    texto_protecao_inversor: str | None = None
-    gerador_texto_introducao: str | None = None
-    gerador_texto_introducao2: str | None = None
-    texto_cabos: list[str] | None = None
-    texto_2_protecao_inversor: list[int] | None = None
-    texto_corrente_max_cabo: str | None = None
+    texto_placas_memorial: str 
+    texto_inversor_memorial: str 
+    texto_potencia_placa: str 
+    texto_tensao_individual_paineis: str 
+    texto_protecao_inversor: str 
+    gerador_texto_introducao: str 
+    gerador_texto_introducao2: str 
+    texto_cabos: list[str] 
+    texto_2_protecao_inversor: list[int] 
+    texto_corrente_max_cabo: str 
     
     #dados painel
-    tipo_celula: str | None = None
-    quantidade_final_placas: int | None = None
-    potencia_total_paineis_final: float | None = None
-    
+    tipo_celula: str 
+    quantidade_final_placas: int 
+    potencia_total_paineis_final: float 
+    corrente_mp: float
+    corrente_cc: float
+    tensao_circuito_aberto: float
+
     #dados inversor
-    numero_total_strings: int | None = None
-    quantidade_final_de_placas_por_inversor: list[int] | None = None
-    potencia_inversores: list[float] | None = None
-    corrente_saida_por_inversor: list[float] | None = None
-
+    numero_total_strings: int 
+    quantidade_final_de_placas_por_inversor: list[int] 
+    potencia_inversores: list[float] 
+    corrente_saida_por_inversor: list[float] 
+    inversor_tensao: list[float]
     #####
-    potencia_efetiva: float | None = None
-    energia_gerada_mensal: float | None = None
-    queda_tensao: float | None = None
+    potencia_efetiva: float 
+    energia_gerada_mensal: float 
+    queda_tensao: float 
 
-    #dados projetista
-    projetista: str | None = None
-    cft_crea: str | None = None
     #
-    equacao: str | None = None
-    equacao2: str | None = None
-    equacao3: str | None = None
-    equacao4: str | None = None
+    equacao: str 
+    equacao2: str 
+    equacao3: str 
+    equacao4: str 
     
 @dataclass
 class RetornoProjetoDiagrama():
     #memorial descritivo
     #endereço da obra
-    logradouro_obra: str | None = None
-    numero_obra: str | None = None
-    complemento_obra: str | None = None
-    bairro_obra: str | None = None
-    cidade_obra: str | None = None
-    estado_obra: str | None = None
-    cep_obra: str | None = None
-    data_hoje: str | None = None
-    data_futura: str | None = None
-    latitude_obra: float | None = None
-    longitude_obra: float | None = None
+    logradouro_obra: str  = None
+    numero_obra: str  = None
+    complemento_obra: str  = None
+    bairro_obra: str  = None
+    cidade_obra: str  = None
+    estado_obra: str  = None
+    cep_obra: str  = None
+    data_hoje: str  = None
+    data_futura: str  = None
+    latitude_obra: float  = None
+    longitude_obra: float  = None
 
     

@@ -278,80 +278,74 @@ class ObjetosCalculados(Calculos):
         equacao4 = fr"$\Delta V \% = \frac{{200*\rho*L_c*I_c*cos\varphi}}{{S_c*V_f}}$"
         return equacao4
 
-    def construtor_dados_memorial(self, ) -> RetornoProjetoCompleto:
-        retorno = RetornoProjetoCompleto()
-        #memorial descritivo
-        retorno.logradouro_obra = self.projeto.endereco_obra.logradouro_obra
-        retorno.numero_obra = self.projeto.endereco_obra.numero_obra
-        retorno.complemento_obra = self.projeto.endereco_obra.complemento_obra
-        retorno.bairro_obra = self.projeto.endereco_obra.bairro_obra
-        retorno.cidade_obra = self.projeto.endereco_obra.cidade_obra
-        retorno.estado_obra = self.projeto.endereco_obra.estado_obra
-        retorno.data_futura = ObjetosCalculados.data_futura(self.data_de_hoje())
-        retorno.cep_obra = self.projeto.endereco_obra.cep_obra
-        retorno.latitude_obra = self.projeto.endereco_obra.latitude_obra
-        retorno.longitude_obra = self.projeto.endereco_obra.longitude_obra
-
-        retorno.nome_cliente = self.projeto.cliente.nome_cliente
-        retorno.cpf = self.projeto.cliente.cpf 
-        retorno.rg = self.projeto.cliente.rg
-        retorno.razao_social = self.projeto.cliente.razao_social
-        retorno.nome_fantasia = self.projeto.cliente.nome_fantasia
-        retorno.cnpj = self.projeto.cliente.cnpj
-        retorno.telefone = self.projeto.cliente.telefone_cliente
-        retorno.email = self.projeto.cliente.email_cliente
-        retorno.data_nascimento = self.projeto.cliente.data_nascimento
-        retorno.data_hoje = ObjetosCalculados.data_de_hoje(self).strftime("%d de %B de %Y")
-
-        #dados elétricos do estabelecimento
-        retorno.classe_consumo = self.projeto.classe_consumo1
-        retorno.carga_instalada_kw = self.projeto.carga_instalada_kw
-        retorno.energia_media_mensal_kwh = round(self.projeto.energia_media_mensal_kwh, 2)
-        retorno.tensao_local = self.get_tensao_local()
-        retorno.tipo_fornecimento = self.projeto.tipo_fornecimento
-        retorno.disjuntor_geral = self.projeto.disjuntor_geral_amperes
+    def construtor_dados_memorial(self) -> RetornoProjetoCompleto:
+        potencia_efetiva = round(self.calculo_potencia_efetiva(self.potencia_total_paineis_final), 2)
         
-        #textos do memorial descritivo
-        retorno.texto_placas_memorial = self.texto_placas_memorial 
-        retorno.texto_inversor_memorial = self.texto_inversor_memorial
-        retorno.texto_potencia_placa = self.texto_potencia_placa
-        retorno.texto_tensao_individual_paineis = self.texto_tensao_individual_paineis
-        retorno.texto_protecao_inversor = self.texto_protecao_inversor
-        retorno.texto_corrente_max_cabo = self.texto_corrente_max_cabo
-        retorno.texto_cabos = self.texto_cabos
-        retorno.texto_2_protecao_inversor = self.texto_2_protecao_inversor
-        retorno.gerador_texto_introducao = self.gerador_texto_introducao
-        retorno.gerador_texto_introducao2 = self.gerador_texto_introducao2
-        retorno.corrente_mp = self.corrente_maxima_potencia
-        retorno.corrente_cc = self.corrente_cc
-        retorno.tensao_circuito_aberto = self.texto_tensao_circuito_aberto
+        return RetornoProjetoCompleto(logradouro_obra = self.projeto.endereco_obra['logradouro_obra'], 
+            numero_obra = self.projeto.endereco_obra['numero_obra'],
+            complemento_obra = self.projeto.endereco_obra['complemento_obra'],
+            bairro_obra = self.projeto.endereco_obra['bairro_obra'],
+            cidade_obra = self.projeto.endereco_obra['cidade_obra'],
+            estado_obra = self.projeto.endereco_obra['estado_obra'],
+            data_futura = ObjetosCalculados.data_futura(self.data_de_hoje()),
+            cep_obra = self.projeto.endereco_obra['cep_obra'],
+            latitude_obra = self.projeto.endereco_obra['latitude_obra'],
+            longitude_obra = self.projeto.endereco_obra['longitude_obra'],
 
-        #dados painel
-        retorno.tipo_celula = self.projeto.sistema_instalado[0].placa.tipo_celula
-        retorno.quantidade_final_placas = self.quantidade_final_placas
-        retorno.potencia_total_paineis_final = self.potencia_total_paineis_final
-        
-        #dados inversor
-        retorno.numero_total_strings = self.numero_total_strings
-        retorno.quantidade_final_de_placas_por_inversor = self.quantidade_final_de_placas_por_inversor
-        retorno.potencia_inversores = self.potencia_inversores
-        retorno.potencia_efetiva = round(self.calculo_potencia_efetiva(self.potencia_total_paineis_final), 2)
-        retorno.corrente_saida_por_inversor = self.corrente_saida_por_inversor
-        retorno.inversor_tensao = self.inversor_tensao
-        #calculos adicionais
-        retorno.energia_gerada_mensal = round(self.energia_gerada(retorno.potencia_efetiva), 2)
-        retorno.queda_tensao = self.tensao_queda
-        retorno.numero_uc = self.projeto.numero_unidade_consumidora
-        
-        #self.projeto
-        retorno.projetista = self.projeto.projetista.nome_projetista
-        retorno.cft_crea = self.projeto.projetista.creci_projetista
+            nome_cliente = self.projeto.cliente['nome_cliente'],
+            cpf = self.projeto.cliente['cpf'], 
+            rg = self.projeto.cliente['rg'],
+            razao_social = self.projeto.cliente['razao_social'],
+            nome_fantasia = self.projeto.cliente['nome_fantasia'],
+            cnpj = self.projeto.cliente['cnpj'],
+            telefone = self.projeto.cliente['telefone_cliente'],
+            email = self.projeto.cliente['email_cliente'],
+            data_nascimento = self.projeto.cliente['data_nascimento'],
+            data_hoje = ObjetosCalculados.data_de_hoje(self).strftime("%d de %B de %Y"),
 
+            #dados elétricos do estabelecimento
+            classe_consumo = self.projeto.classe_consumo1,
+            carga_instalada_kw = self.projeto.carga_instalada_kw,
+            energia_media_mensal_kwh = round(self.projeto.energia_media_mensal_kwh, 2),
+            tensao_local = self.get_tensao_local(),
+            tipo_fornecimento = self.projeto.tipo_fornecimento,
+            disjuntor_geral = self.projeto.disjuntor_geral_amperes,
+            
+            #textos do memorial descritivo
+            texto_placas_memorial = self.texto_placas_memorial, 
+            texto_inversor_memorial = self.texto_inversor_memorial,
+            texto_potencia_placa = self.texto_potencia_placa,
+            texto_tensao_individual_paineis = self.texto_tensao_individual_paineis,
+            texto_protecao_inversor = self.texto_protecao_inversor,
+            texto_corrente_max_cabo = self.texto_corrente_max_cabo,
+            texto_cabos = self.texto_cabos,
+            texto_2_protecao_inversor = self.texto_2_protecao_inversor,
+            gerador_texto_introducao = self.gerador_texto_introducao,
+            gerador_texto_introducao2 = self.gerador_texto_introducao2,
+            corrente_mp = self.corrente_maxima_potencia,
+            corrente_cc = self.corrente_cc,
+            tensao_circuito_aberto = self.texto_tensao_circuito_aberto,
 
-        #equacoes
-        retorno.equacao = self.equacao_demanda()
-        retorno.equacao2 = self.calculo_fator_de_carga()
-        retorno.equacao3 = self.conta_equacoes_inversor()
-        retorno.equacao4 = self.equacao_queda_tensao()
+            #dados painel
+            tipo_celula = self.projeto.sistema_instalado[0].placa.tipo_celula,
+            quantidade_final_placas = self.quantidade_final_placas,
+            potencia_total_paineis_final = self.potencia_total_paineis_final,
+            
+            #dados inversor
+            numero_total_strings = self.numero_total_strings,
+            quantidade_final_de_placas_por_inversor = self.quantidade_final_de_placas_por_inversor,
+            potencia_inversores = self.potencia_inversores,
+            potencia_efetiva= potencia_efetiva,
+            corrente_saida_por_inversor = self.corrente_saida_por_inversor,
+            inversor_tensao = self.inversor_tensao,
+            #calculos adicionais
+            energia_gerada_mensal = round(self.energia_gerada(potencia_efetiva), 2),
+            queda_tensao = self.tensao_queda,
+            numero_uc = self.projeto.numero_unidade_consumidora,
 
-        return retorno 
+            #equacoes
+            equacao = self.equacao_demanda(),
+            equacao2 = self.calculo_fator_de_carga(),
+            equacao3 = self.conta_equacoes_inversor(),
+            equacao4 = self.equacao_queda_tensao() )
+
