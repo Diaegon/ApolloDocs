@@ -7,7 +7,7 @@ from io import BytesIO
 from src.buildingdocuments.memorialdescritivo import MemorialDescritivo
 from src.buildingdocuments.procuracao import Procuracao
 from src.createproject import ProjectFactory
-from src.schemas.schemas import Cliente, EnderecoCliente, EnderecoObra, Projeto, ProjetoMemorial, ConfiguracaoSistema, ProjetoProcuracao
+from src.schemas.schemas import Cliente, EnderecoCliente, EnderecoObra, ProjetoMemorial, ConfiguracaoSistema, ProjetoProcuracao
 from src.factory.datas.creatememorialobject import ObjetosCalculados
 from src.config import INPUTS_DIR
 import json 
@@ -23,11 +23,13 @@ def landing_page():
 
 #FAZER UM SCHEMA SÓ PRO MEMORIAL.
 @app.post("/memorialdescritivo", status_code=201, response_model= None)
-async def post_data_memorial(projeto: ProjetoMemorial, sistema_instalado: ConfiguracaoSistema):
-    projeto_retorno = ProjectFactory.factory(inputs=None, inputs_projeto=projeto.dict(),
-                                              config_sistema=sistema_instalado.dict())
-    retorno = ObjetosCalculados(projeto_retorno).construtor_dados_memorial() #O OBJETO DE RETORNO É UM OBJ DATACLASS
+async def post_data_memorial(dados_entrada: ProjetoMemorial):
+    projeto = ProjectFactory.factory(dados_entrada)
     
+    retorno = ObjetosCalculados(projeto).construtor_dados_memorial() #O OBJETO DE RETORNO É UM OBJ DATACLASS
+    
+    print(retorno)
+
     pdf = MemorialDescritivo(retorno)
     pdf.gerar_memorial()
 

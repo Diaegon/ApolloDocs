@@ -12,18 +12,5 @@ class TextoProcuracao():
         CPF {self.projeto.procurador.cpf_procurador}, residente e domiciliado na {self.projeto.procurador.logradouro_procurador}, \
         {self.projeto.procurador.numero_casa_procurador} {self.projeto.procurador.complemento_procurador}, {self.projeto.procurador.bairro_procurador}\
         {self.projeto.procurador.cidade_procurador}, {self.projeto.procurador.estado_procurador}, CEP: {self.projeto.procurador.cep_procurador}, {self.projeto.procurador.telefone_procurador}, \
-        a quem confiro amplos poderes para me representar junto a ENEL, com o fim de solicitar a \
+        a quem confiro amplos poderes para me representar junto a concessionária de energia, com o fim de solicitar a \
         ligação do sistema fotovoltaico, e para assinar todos os documentos necessários para solicitação de acesso e vistoria, durante os próximos <b>3 MESES</b>." 
-
-
-if __name__ == "__main__":
-    from src.factorys.datas.createproject import ProjectFactory
-    from src.config import INPUTS_DIR
-    import json 
-    file = INPUTS_DIR / "input_solar.json"
-    inputs = json.loads(file.read_text(encoding="utf-8"))
-    
-    projeto = ProjectFactory.factory(inputs)
-    texto = TextoProcuracao(projeto)
-    print(texto.texto_procuracao())
-    pass

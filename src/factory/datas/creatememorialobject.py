@@ -1,6 +1,6 @@
 #por enquanto objeto está aqui, mas o ideal é isntanciar de outro lugar
 from src.factory.datas.utils.calculos import Calculos
-from src.schemas.modelreturnobject import RetornoObjetosCalculados
+from src.schemas.modelreturnobject import RetornoProjetoCompleto, ProjetoCompleto
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import locale
@@ -274,14 +274,12 @@ class ObjetosCalculados(Calculos):
         
         return equacao
     
-
     def equacao_queda_tensao(self):
         equacao4 = fr"$\Delta V \% = \frac{{200*\rho*L_c*I_c*cos\varphi}}{{S_c*V_f}}$"
         return equacao4
 
-
-    def construtor_dados_memorial(self) -> RetornoObjetosCalculados:
-        retorno = RetornoObjetosCalculados()
+    def construtor_dados_memorial(self, ) -> RetornoProjetoCompleto:
+        retorno = RetornoProjetoCompleto()
         #memorial descritivo
         retorno.logradouro_obra = self.projeto.endereco_obra.logradouro_obra
         retorno.numero_obra = self.projeto.endereco_obra.numero_obra
@@ -306,7 +304,7 @@ class ObjetosCalculados(Calculos):
         retorno.data_hoje = ObjetosCalculados.data_de_hoje(self).strftime("%d de %B de %Y")
 
         #dados elétricos do estabelecimento
-        retorno.classe_consumo = self.projeto.classe_consumo
+        retorno.classe_consumo = self.projeto.classe_consumo1
         retorno.carga_instalada_kw = self.projeto.carga_instalada_kw
         retorno.energia_media_mensal_kwh = round(self.projeto.energia_media_mensal_kwh, 2)
         retorno.tensao_local = self.get_tensao_local()
@@ -357,5 +355,3 @@ class ObjetosCalculados(Calculos):
         retorno.equacao4 = self.equacao_queda_tensao()
 
         return retorno 
-
-   

@@ -10,6 +10,9 @@ if quantidade_inversor3 not in [None,0]:
 from src.utils.helpers import (cft_crea, projetista, projeto, data_de_hoje, municipio_obra, logradouro_obra, numero_obra, complemento_obra, bairro_obra,
                             nome_cliente)
 
+
+from io import BytesIO
+
 def gerar_diagramaunifilar():
     caminho_inversor1 =   r'support-files\templates_diagramaunifilar\diagrama1.pdf'  
     caminho_inversor2 = r'support-files\templates_diagramaunifilar\diagrama2.pdf'
@@ -30,6 +33,7 @@ def gerar_diagramaunifilar():
     def inserir_dados_no_pdf(pdf_base, pdf_saida):
         doc = fitz.open(pdf_base)
         page = doc[0]  # primeira página  
+        
         def funcao_dados_gerais():
             #dados {proprietario}
             page.insert_text((1245, 920), f"{nome_cliente}", fontsize=5, fontname="helv", color=(0, 0, 0))
@@ -42,6 +46,7 @@ def gerar_diagramaunifilar():
             page.insert_text((1375, 937), f"{municipio_obra}", fontsize=5, fontname="helv", color=(0, 0, 0))
             page.insert_text((1315, 230), f"{potencia_total_unifilar / 1000} kWp / {inversor_total_unifilar / 1000} kW", fontsize=12, fontname="helv", color=(0, 0, 0))
         funcao_dados_gerais()    
+        
         def funcao_lado_do_inversor():
         #texto Paineis
             page.insert_text((370, 570), f"{paineis_diagrama}", fontsize=12, fontname="helv", color=(0, 0, 0))
@@ -58,6 +63,7 @@ def gerar_diagramaunifilar():
                 #linhas do disjuntor
                 page.draw_line(p1=(696, 530), p2=(696, 536), color=(0, 0, 0), width= 0.5)
                 page.draw_line(p1=(700, 530), p2=(700, 536), color=(0, 0, 0), width= 0.5)  
+        
         def funcao_lado_do_inversor2():
             page.insert_text((370, 450), f"{paineis_diagrama2}", fontsize=12, fontname="helv", color=(0, 0, 0))
             #texto inversores
@@ -73,6 +79,7 @@ def gerar_diagramaunifilar():
                 #linhas do disjuntor
                 page.draw_line(p1=(671, 412), p2=(671, 419), color=(0, 0, 0), width= 0.5)
                 page.draw_line(p1=(676, 412), p2=(676, 419), color=(0, 0, 0), width= 0.5)  
+        
         def funcao_lado_do_inversor3():
             page.insert_text((370, 330), f"{paineis_diagrama3}", fontsize=12, fontname="helv", color=(0, 0, 0))
             #texto inversores
@@ -88,6 +95,7 @@ def gerar_diagramaunifilar():
                 #linhas do disjuntor
                 page.draw_line(p1=(671, 294), p2=(671, 301), color=(0, 0, 0), width= 0.5)
                 page.draw_line(p1=(676, 294), p2=(676, 301), color=(0, 0, 0), width= 0.5) 
+        
         def funcao_lado_rede():
             if tensao_local == 220:
                 page.insert_text((860, 555), f"{texto_disjuntorgeral_unifilar}", fontsize=6, fontname="helv", color=(0, 0, 0))
@@ -101,6 +109,7 @@ def gerar_diagramaunifilar():
                 #LINHAS DO CABO
                 page.draw_line(p1=(773, 536), p2=(773, 547), color=(0, 0, 0), width= 0.5)
                 page.draw_line(p1=(770, 536), p2=(770, 547), color=(0, 0, 0), width= 0.5)    
+        
         if quantidade_inversor2 not in [None,0]:
             funcao_lado_do_inversor2()
         if quantidade_inversor3 not in [None,0]:

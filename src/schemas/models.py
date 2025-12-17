@@ -16,7 +16,7 @@ class classe_consumo(BaseEnum):
     INDUSTRIAL = "industrial"
     RURAL = "rural"
 
-class ramal_energia(BaseEnum):
+class ramal_de_energia(BaseEnum):
     AEREO = "aereo"
     SUBTERRANEO = "subterraneo"
 

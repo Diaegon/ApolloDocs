@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr
 
-from src.schemas.models import tensao_fase, classe_consumo, ramal_energia, tipo_inversor
+from src.schemas.models import tensao_fase, classe_consumo, ramal_de_energia, tipo_inversor
+
+from dataclasses import dataclass
 
 #################################### DADOS ENTRADA DO PROJETO ####################################
 class Cliente(BaseModel):
@@ -59,7 +61,6 @@ class Procurador(BaseModel):
     cidade_procurador: str  = "[CIDADE DO PROCURADOR]"
     estado_procurador: str = "[ESTADO DO PROCURADOR]"
 
-
 ##################### DADOS DE SISTEMA INSTALADO E PROJETO ########################### 
 class Inversor(BaseModel):
     id_inversor: int | None
@@ -69,8 +70,6 @@ class Inversor(BaseModel):
     numero_fases: tensao_fase = "monofasico"
     tipo_de_inversor: tipo_inversor  = "string"
     numero_mppt: int | None = 4 #reservado para atualizações futuras
-
-    
 
 class Placa(BaseModel):
     id_placa: int | None
@@ -84,9 +83,8 @@ class Placa(BaseModel):
     corrente_maxima_potencia: float = 0.0
     eficiencia_placa: float | None #reservado para atualizações futuras
 
-    
 class QuantidadePlacas(BaseModel):
-    quantidade_placas: int
+    quantidade_placas: int = 10
     quantidade_placas2: int | None = None
 
 class ConfiguracaoSistema(BaseModel):
@@ -96,42 +94,29 @@ class ConfiguracaoSistema(BaseModel):
     placa: Placa
     placa2: Placa | None = None
 
- 
-class Projeto(BaseModel):
-    model_config = {"use_enum_values": True}
-    id_projeto: int | None
-    
-    numero_unidade_consumidora: str
-    carga_instalada_kw: float = 10.0
-    disjuntor_geral_amperes: float = 40.0
-    energia_media_mensal_kwh: float = 200.0
-    classe_consumo:  classe_consumo #residencial, comercial, industrial, rural
-    tipo_fornecimento: tensao_fase #monofasico, bifasico, trifasico
-    ramal_energia: ramal_energia #aéreo, subterrâneo
-    data_projeto: str
-    quantidade_sistemas_instalados: int = 1
-    cliente: Cliente
-    endereco_cliente: EnderecoCliente
-    endereco_obra: EnderecoObra
-    projetista: Projetista
-    procurador: Procurador
 
-    sistema_instalado: list[ConfiguracaoSistema]
-    #quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
 
 class ProjetoMemorial(BaseModel):
     model_config = {"use_enum_values": True}
     id_projeto: int | None
+    
+    cliente: Cliente | None
+    endereco_obra: EnderecoObra | None
+
     numero_unidade_consumidora: str
     carga_instalada_kw: float = 10.0
     disjuntor_geral_amperes: float = 40.0
     energia_media_mensal_kwh: float = 200.0
-    classe_consumo:  classe_consumo #residencial, comercial, industrial, rural
+    classe_consumo1:  classe_consumo #residencial, comercial, industrial, rural
     tipo_fornecimento: tensao_fase #monofasico, bifasico, trifasico
-    ramal_energia: ramal_energia #aéreo, subterrâneo
+    ramal_energia: ramal_de_energia #aéreo, subterrâneo
     data_projeto: str
 
     quantidade_sistemas_instalados: int = 1
+
+    sistema_instalado1: ConfiguracaoSistema
+    sistema_instalado2: ConfiguracaoSistema | None = None
+    sistema_instalado3: ConfiguracaoSistema | None = None   
 
 class ProjetoProcuracao(BaseModel):
     model_config = {"use_enum_values": True}

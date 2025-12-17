@@ -120,15 +120,3 @@ que satisfaz a demanda média calculada."
         return f"{self.retorno.data_hoje}"
 
  
-if __name__ == "__main__":
-    from src.factorys.datas.createproject import ProjectFactory
-    from src.factorys.datas.objectbuider import ObjetosCalculados
-    from src.config import INPUTS_DIR
-    import json 
-    file = INPUTS_DIR / "input_solar.json"
-    inputs = json.loads(file.read_text(encoding="utf-8"))
-    
-    projeto = ProjectFactory.factory(inputs)
-    retorno = ObjetosCalculados(projeto).construtor_dados_memorial()
-    print(retorno)
-    pass
