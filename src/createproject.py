@@ -2,13 +2,12 @@ from src.schemas.schemas import (ProjetoMemorial)
 
 from src.schemas.modelreturnobject import ProjetoCompleto, ConfiguracaoSistema
 
-#criação das classes de sistema isntalado
+#classe que trata os dados de entrada do sistem instalado e monta a estrutura correta para o objeto de domínio
 class SistemaInstaladoFactory:
     @staticmethod
     def instanciar_sistema_instalado_do_json(inputs) -> ConfiguracaoSistema:
         dados_sistema = inputs
         qtd_total_placas = dados_sistema.quantidade_total_placas_do_sistema
-        #o (a) é o número do sistema instalado no json de entrada.
         # Monta o dicionário de dados
         dados = {
             'inversor': dados_sistema.inversor,
@@ -23,7 +22,7 @@ class SistemaInstaladoFactory:
             dados['quantidade_placas2'] = qtd_total_placas.quantidade_placas2
 
         return ConfiguracaoSistema(**dados)
-    
+
     @staticmethod
     def build_sistema_instalado_list(inputs: ProjetoMemorial) -> list[ConfiguracaoSistema]:
         sistemas = []
@@ -38,7 +37,7 @@ class SistemaInstaladoFactory:
 
         return sistemas
 
-#Criação da instancia final dos dados iniciais do projeto. 
+#Criação do objeto de domínio ProjetoCompleto a partir do json de entrada ProjetoMemorial. aproveitando a factory do sistema instalado.
 class ProjectFactory:
     @staticmethod
     def factory(inputs_projeto: ProjetoMemorial) -> ProjetoCompleto:

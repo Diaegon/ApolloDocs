@@ -198,18 +198,37 @@ class RetornoProjetoCompleto():
     
 @dataclass
 class RetornoProjetoDiagrama():
-    #memorial descritivo
-    #endereço da obra
-    logradouro_obra: str  = None
-    numero_obra: str  = None
-    complemento_obra: str  = None
-    bairro_obra: str  = None
-    cidade_obra: str  = None
-    estado_obra: str  = None
-    cep_obra: str  = None
-    data_hoje: str  = None
-    data_futura: str  = None
-    latitude_obra: float  = None
-    longitude_obra: float  = None
+    quantidade_sistemas_instalados: int
 
+    endereco_obra: EnderecoObra
+
+    nome_projetista: str 
+    cft_crea_projetista: str 
+    nome_cliente: str
+    tensao_local: int
+    data_hoje: str
     
+    sistema_instalado1: ConfiguracaoSistema
+    
+    texto_disjuntorgeral_unifilar: str
+    
+    texto_disjuntor_protecao1: str
+    texto_paineis1: str
+    cabo_inversor1: str
+    texto_inversor1: str
+    potencia_total_inversores: float
+    potencia_total_placas: float
+
+
+    sistema_instalado2: ConfiguracaoSistema | None = None
+    sistema_instalado3: ConfiguracaoSistema | None = None
+
+    texto_disjuntor_protecao2: str | None = None
+    texto_disjuntor_protecao3: str | None = None
+    cabo_inversor2: str | None = None
+    cabo_inversor3: str | None = None
+    texto_paineis2: str | None = None
+    texto_paineis3: str | None = None
+    texto_inversor2: str | None = None
+    texto_inversor3: str | None = None
+   

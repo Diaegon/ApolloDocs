@@ -50,3 +50,8 @@ class corrente_max_cabo(str, Enum):
     cabo_16MM2 = "68 A"
     cabo_25MM2 = "89 A"
     cabo_35MM2 = "111 A"
+
+class quantidade_sistemas(int, Enum):
+    UM_SISTEMA = 1
+    DOIS_SISTEMAS = 2
+    TRES_SISTEMAS = 3

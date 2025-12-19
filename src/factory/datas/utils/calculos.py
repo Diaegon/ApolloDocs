@@ -1,12 +1,13 @@
 class Calculos:
     ### inversor calculos ###
-    def get_corrente_saida(self,potencia_inversor, multiplicador, inversor_tensao) -> float:
+    @staticmethod
+    def get_corrente_saida(potencia_inversor, multiplicador, inversor_tensao) -> float:
         """Calcula a corrente de saída do inversor."""
         corrente_saida = potencia_inversor / (multiplicador * inversor_tensao)
         return corrente_saida       
 
-    
-    def disjuntor_protecao(self,corrente_saida) -> int:
+    @staticmethod
+    def disjuntor_protecao(corrente_saida) -> int:
         """Calcula o disjuntor de proteção do inversor."""
         corrente = corrente_saida
         if corrente <= 10:
@@ -30,8 +31,8 @@ class Calculos:
         else:
             raise ValueError("Corrente de saída muito alta para disjuntor padrão")
 
-    
-    def cabo_energia_inversor(self,corrente_de_saida) -> str:
+    @staticmethod
+    def cabo_energia_inversor(corrente_de_saida) -> str:
         """Determina o cabo de energia baseado na corrente de saída."""
         corrente = corrente_de_saida
         if corrente <= 27:
@@ -49,8 +50,8 @@ class Calculos:
         else:
             raise ValueError("Corrente de saída muito alta para cabo padrão")
 
-    
-    def corrente_max_cabo(self,corrente_saida) -> str:
+    @staticmethod
+    def corrente_max_cabo(corrente_saida) -> str:
         """Determina a corrente máxima do cabo baseado na corrente de saída."""
         corrente = corrente_saida
         if corrente <= 28:

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
-from src.schemas.models import tensao_fase, classe_consumo, ramal_de_energia, tipo_inversor
+from src.schemas.models import tensao_fase, classe_consumo, ramal_de_energia, tipo_inversor, quantidade_sistemas
 
 from dataclasses import dataclass
 
@@ -94,8 +94,6 @@ class ConfiguracaoSistema(BaseModel):
     placa: Placa
     placa2: Placa | None = None
 
-
-
 class ProjetoMemorial(BaseModel):
     model_config = {"use_enum_values": True}
     id_projeto: int | None
@@ -119,6 +117,7 @@ class ProjetoMemorial(BaseModel):
     sistema_instalado3: ConfiguracaoSistema | None = None   
 
 class ProjetoProcuracao(BaseModel):
+
     model_config = {"use_enum_values": True}
     id_projeto: int | None
     
@@ -126,3 +125,20 @@ class ProjetoProcuracao(BaseModel):
     endereco_cliente: EnderecoCliente
     endereco_obra: EnderecoObra
     procurador: Procurador
+
+class ProjetoUnifilar(BaseModel):
+    
+    nome_projetista: str = "[NOME DO PROJETISTA]"
+    cft_crea_projetista: str = "[CFT ou CREA DO PROJETISTA]"
+    
+    nome_cliente: str
+    
+    endereco_obra: EnderecoObra
+    disjuntor_geral_amperes: float = 40.0
+    tensao_local: int
+
+    quantidade_sistemas_instalados: quantidade_sistemas
+    
+    sistema_instalado1: ConfiguracaoSistema
+    sistema_instalado2: ConfiguracaoSistema | None = None
+    sistema_instalado3: ConfiguracaoSistema | None = None   
