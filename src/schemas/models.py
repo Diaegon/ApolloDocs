@@ -1,14 +1,17 @@
 from enum import Enum
 
-#Base Enum para outras classes Enum
+
+# Base Enum para outras classes Enum
 class BaseEnum(str, Enum):
     def __repr__(self):
         return self.value
+
 
 class tensao_fase(BaseEnum):
     MONOFASICO = "monofasico"
     BIFASICO = "bifasico"
     TRIFASICO = "trifasico"
+
 
 class classe_consumo(BaseEnum):
     RESIDENCIAL = "residencial"
@@ -16,13 +19,16 @@ class classe_consumo(BaseEnum):
     INDUSTRIAL = "industrial"
     RURAL = "rural"
 
+
 class ramal_de_energia(BaseEnum):
     AEREO = "aereo"
     SUBTERRANEO = "subterraneo"
 
+
 class tipo_inversor(BaseEnum):
     STRING = "string"
     MICRO = "micro"
+
 
 class disjuntores(str, Enum):
     A10 = "10 A"
@@ -35,6 +41,7 @@ class disjuntores(str, Enum):
     A63 = "63 A"
     A80 = "80 A"
 
+
 class cabo_energia(str, Enum):
     MM2_4 = "4 mm²"
     MM2_6 = "6 mm²"
@@ -43,6 +50,7 @@ class cabo_energia(str, Enum):
     MM2_25 = "25 mm²"
     MM2_35 = "35 mm²"
 
+
 class corrente_max_cabo(str, Enum):
     cabo_4MM2 = "28 A"
     cabo_6MM2 = "36 A"
@@ -50,8 +58,3 @@ class corrente_max_cabo(str, Enum):
     cabo_16MM2 = "68 A"
     cabo_25MM2 = "89 A"
     cabo_35MM2 = "111 A"
-
-class quantidade_sistemas(int, Enum):
-    UM_SISTEMA = 1
-    DOIS_SISTEMAS = 2
-    TRES_SISTEMAS = 3
