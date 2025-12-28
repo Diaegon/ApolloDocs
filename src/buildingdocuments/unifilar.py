@@ -171,7 +171,6 @@ class DiagramaUnifilar:
                 p1=(770, 536), p2=(770, 547), color=(0, 0, 0), width=0.5
             )
 
-    # PAREI AQUI
     def funcao_lado_do_inversor(self, page):
         page.insert_text(
             (370, 570),

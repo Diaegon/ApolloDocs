@@ -244,3 +244,26 @@ class RetornoProjetoDiagrama:
     texto_paineis3: str | None = None
     texto_inversor2: str | None = None
     texto_inversor3: str | None = None
+
+@dataclass
+class RetornoProjetoFormulario:
+
+    numero_uc: str    
+    classe_consumo: str
+    ramal_energia: str
+    nome_cliente: str
+    cpf: str
+    telefone_cliente: str
+    email_cliente: str
+
+    endereco_obra: EnderecoObra
+
+    tensao_local: int
+    carga_instalada_kw: float
+    
+    potencia_geracao: int
+
+    nome_procurador: str
+    cpf_procurador: str
+    email_procurador: str
+    data_hoje: str
