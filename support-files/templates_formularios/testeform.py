@@ -11,8 +11,8 @@ def preencher_por_frase(page, frase, valor, dy=-1):
 
     rect = areas[0]
 
-    x = rect.x1 + 2
-    y = rect.y0 + rect.height + dy
+    x = rect.x1 + 6
+    y = rect.y1
 
     page.insert_text(
         (x, y),
