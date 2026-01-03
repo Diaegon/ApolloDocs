@@ -3,8 +3,9 @@ from pydantic import BaseModel, EmailStr
 from api.schemas.cliente.endereco import EnderecoObra
 from api.schemas.common.enums import classe_consumo, ramal_de_energia
 
+
 class ProjetoFormularioEnelCe(BaseModel):
-    numero_uc: str = "[INSIRA UC AQUI]"   
+    numero_uc: str = "[INSIRA UC AQUI]"
     classe: classe_consumo
     ramal_energia: ramal_de_energia
     nome_cliente: str = "[NOME DO CLIENTE]"
@@ -16,7 +17,7 @@ class ProjetoFormularioEnelCe(BaseModel):
 
     tensao_local: int = 220
     carga_instalada_kw: float = 8
-    
+
     potencia_geracao: int = 8
 
     nome_procurador: str = "NOME DO PROCURADOR"

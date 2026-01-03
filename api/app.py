@@ -9,6 +9,6 @@ app.include_router(docs.router)
 app.include_router(users.router)
 
 
-@app.get("/")
+@app.get("/", tags=["Landing Page"])
 def landing_page():
     return FileResponse(path=IMAGE_PATH, media_type="image/png")

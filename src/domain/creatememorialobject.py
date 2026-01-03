@@ -390,7 +390,9 @@ class ObjetosCalculados(Calculos):
             bairro_obra=self.projeto.endereco_obra["bairro_obra"],
             cidade_obra=self.projeto.endereco_obra["cidade_obra"],
             estado_obra=self.projeto.endereco_obra["estado_obra"],
-            data_futura=ObjetosCalculados.data_futura(ObjetosCalculados.data_de_hoje()),
+            data_futura=ObjetosCalculados.data_futura(
+                ObjetosCalculados.data_de_hoje()
+            ),
             cep_obra=self.projeto.endereco_obra["cep_obra"],
             latitude_obra=self.projeto.endereco_obra["latitude_obra"],
             longitude_obra=self.projeto.endereco_obra["longitude_obra"],

@@ -123,9 +123,7 @@ class MemorialDescritivo:
         story.append(
             Paragraph(self.texto.texto_calculo_demanda(), styles["CorpoTexto"])
         )
-        self.imagens.insert_equation(
-            self.dados.equacao, story
-        )
+        self.imagens.insert_equation(self.dados.equacao, story)
 
         story.append(
             Paragraph(
@@ -234,9 +232,7 @@ class MemorialDescritivo:
         )
         story.append(PageBreak())
 
-        self.imagens.insert_equation_current(
-            self.dados.equacao3, story
-        )
+        self.imagens.insert_equation_current(self.dados.equacao3, story)
 
         # AJEITAR ESSA LÓGICA PARA NÃO PRECISAR DO IF NO MEIO DO GERADOR DE TEXTO.
 
@@ -248,9 +244,7 @@ class MemorialDescritivo:
             )
         )
 
-        self.imagens.insert_equation(
-            self.dados.equacao4, story
-        )
+        self.imagens.insert_equation(self.dados.equacao4, story)
 
         story.append(Spacer(1, 1 * cm))
         story.append(self.tabela.tabela_queda_tensao())

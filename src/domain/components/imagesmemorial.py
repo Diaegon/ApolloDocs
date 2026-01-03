@@ -31,9 +31,11 @@ class InsertImage:
     def render_equation_to_image(equation):
         buffer = BytesIO()
         plt.figure(figsize=(3, 1))
-        plt.text(0.5, 0.5, rf"{equation}", fontsize=20, ha='center', va='center')
-        plt.axis('off')
-        plt.savefig(buffer, bbox_inches='tight', pad_inches=0.1, dpi=200)
+        plt.text(
+            0.5, 0.5, rf"{equation}", fontsize=20, ha="center", va="center"
+        )
+        plt.axis("off")
+        plt.savefig(buffer, bbox_inches="tight", pad_inches=0.1, dpi=200)
         plt.close()
         buffer.seek(0)
         return buffer

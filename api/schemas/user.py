@@ -1,6 +1,8 @@
-from datetime import datetime
+from pydantic import BaseModel, ConfigDict, EmailStr
 
-from pydantic import BaseModel, EmailStr
+
+class Message(BaseModel):
+    message: str
 
 
 # classe de esquema para usuário
@@ -14,13 +16,15 @@ class UserPublic(BaseModel):
     id: int
     username: str
     email: EmailStr
-    created_at: datetime
-    updated_at: datetime | None
+    model_config = ConfigDict(from_attributes=True)
+    # created_at: datetime
+    # updated_at: datetime | None
+
+
+class UserList(BaseModel):
+    users: list[UserPublic]
 
 
 class TokenSchema(BaseModel):
     access_token: str
     token_type: str
-
-class UserDB(UserSchema):
-    id: int
