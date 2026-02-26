@@ -21,7 +21,7 @@ dados_auth = Annotated[OAuth2PasswordRequestForm, Depends()]
 Sessions = Annotated[Session, Depends(get_session)]
 
 
-@router.post("/", response_model=TokenSchema)
+@router.post("", response_model=TokenSchema)
 def login_for_access_token(
     form_data: dados_auth,
     session: Sessions,
