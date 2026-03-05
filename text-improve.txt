@@ -1,0 +1,32 @@
+Architectural Improvement Ideas
+1. Introduction of a Service Layer
+Currently, the API routers directly orchestrate the entire process.
+ Adding a dedicated ProjectService or DocumentService would:
+
+Decouple the web framework (FastAPI) from the business logic.
+Make it easier to add background processing (e.g., generating 100+ documents in parallel).
+
+2. Modularize the Calculation Engine
+The ObjetosCalculados class is a "God Object" that knows about everything
+(electrical, legal, logic).
+
+Recommendation: Split it into specialized modules like ElectricalCalculator,
+DemandPricingCalculator, and LegalTemplateParser.
+This makes testing individual parts much easier.
+
+3. Abstract Report Interface
+Each PDF builder currently has unique method names and structures.
+
+Recommendation: Implement a base BaseDocumentBuilder class with a standard render() method.
+This would allow the API to handle any document generation type polymorphically.
+4. Template Externalization
+Many document strings and layout rules are hardcoded in Python.
+
+Recommendation: Move layouts to a template-based system
+(e.g., Jinja2 with HTML-to-PDF or specialized JSON templates).
+ This allows non-developers to edit the document content without touching the code.
+
+5. Async Document Generation
+PDF generation can be CPU-intensive and slow for large projects.
+
+Recommendation: Implement a task queue (like Celery or FastAPI Background Tasks) to return a 202 Accepted and notify the user when the PDF is ready.

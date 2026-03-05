@@ -1,10 +1,8 @@
 from http import HTTPStatus
-from io import BytesIO
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+from typing import Annotated
 
 from api.database import get_session
 from api.schemas.models import User
@@ -13,20 +11,13 @@ from api.schemas.projetos.memorial import ProjetoMemorial
 from api.schemas.projetos.procuracao import ProjetoProcuracao
 from api.schemas.projetos.unifilar import ProjetoUnifilar
 from api.security import get_current_user
-from src.buildingdocuments.formularioENEL import FormularioEnelCe
-from src.buildingdocuments.memorialdescritivo import MemorialDescritivo
-from src.buildingdocuments.procuracao import Procuracao
-from src.buildingdocuments.unifilar import DiagramaUnifilar
-from src.createproject import ProjectFactory
-from src.domain.creatediagramobject import ObjetoDiagramaUnifilar
-from src.domain.creatememorialobject import ObjetosCalculados
+from api.services.docs_service import DocsService
 
 router = APIRouter(prefix="/docs", tags=["Documentos"])
 Sessions = Annotated[Session, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-# FAZER UM SCHEMA SÓ PRO MEMORIAL.
 @router.post("/memorialdescritivo", status_code=201, response_model=None)
 async def post_data_memorial(
     dados_entrada: ProjetoMemorial,
@@ -38,17 +29,7 @@ async def post_data_memorial(
             status_code=HTTPStatus.FORBIDDEN, detail="Not enough permissions"
         )
 
-    projeto = ProjectFactory.factory(dados_entrada)
-    retorno = ObjetosCalculados(
-        projeto
-    )  # O OBJETO DE RETORNO É UM OBJ DATACLASS
-    print("\n")
-    retorno = retorno.construtor_dados_memorial()
-    pdf = MemorialDescritivo(retorno)
-    pdf.gerar_memorial()
-
-    buffer = BytesIO(pdf.to_bytes())
-    buffer.seek(0)
+    buffer = DocsService.generate_memorial(dados_entrada)
 
     return StreamingResponse(
         buffer,
@@ -68,11 +49,8 @@ async def post_data_procuracao(
             status_code=HTTPStatus.FORBIDDEN, detail="Not enough permissions"
         )
 
-    pdf = Procuracao(projeto)
-    pdf.gerar_procuracao()
+    buffer = DocsService.generate_procuracao(projeto)
 
-    buffer = BytesIO(pdf.to_bytes())
-    buffer.seek(0)
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
@@ -91,11 +69,8 @@ async def post_data_diagrama_unifilar(
             status_code=HTTPStatus.FORBIDDEN, detail="Not enough permissions"
         )
 
-    projeto = ObjetoDiagramaUnifilar(dados).construir_dados_diagrama()
-    pdf = DiagramaUnifilar(projeto)
-    pdf.gerar_diagrama()
-    buffer = BytesIO(pdf.to_bytes())
-    buffer.seek(0)
+    buffer = DocsService.generate_diagrama_unifilar(dados)
+
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
@@ -117,16 +92,10 @@ async def post_data_formulario_enel_ce(
             status_code=HTTPStatus.FORBIDDEN, detail="Not enough permissions"
         )
 
-    pdf = FormularioEnelCe(dados)
-    pdf.gerar_formulario()
+    buffer = DocsService.generate_formulario_enel(dados)
 
-    buffer = BytesIO(pdf.to_bytes())
-    buffer.seek(0)
     return StreamingResponse(
         buffer,
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=formulario.pdf"},
     )
-
-
-# CRIAR UM ENDPOINT PARA GERAÇÃO DE CONTRATOS COM AJUSTE DE IA########
