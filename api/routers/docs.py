@@ -1,8 +1,9 @@
 from http import HTTPStatus
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from typing import Annotated
 
 from api.database import get_session
 from api.schemas.models import User

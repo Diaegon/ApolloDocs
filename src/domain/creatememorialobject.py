@@ -18,7 +18,6 @@ except locale.Error:
 
 class ObjetosCalculados(Calculos):
     def __init__(self, projeto):
-        # check
         self.projeto = projeto
         self.numero_total_strings = 0
         self.quantidade_sistemas = 0
@@ -27,28 +26,41 @@ class ObjetosCalculados(Calculos):
         self.quantidade_final_placas = 0
         self.potencia_total_paineis_final = 0
         self.quantidade_final_de_placas_por_inversor = []
-        self.texto_placas_memorial = ""
-        self.texto_inversor_memorial = ""
-        self.texto_potencia_placa = ""
-        self.texto_tensao_individual_paineis = ""
-        self.texto_tensao_circuito_aberto = ""
-        self.corrente_maxima_potencia = ""
-        self.corrente_cc = ""
-        self.texto_protecao_inversor = ""
-        self.texto_corrente_max_cabo = ""
+        # text fields — built as lists and joined in construtor_dados_memorial
+        self._list_placas_memorial = []
+        self._list_inversor_memorial = []
+        self._list_potencia_placa = []
+        self._list_tensao_individual_paineis = []
+        self._list_tensao_circuito_aberto = []
+        self._list_corrente_maxima_potencia = []
+        self._list_corrente_cc = []
+        self._list_protecao_inversor = []
+        self._list_corrente_max_cabo = []
         self.texto_cabos = []
         self.texto_2_protecao_inversor = []
         self.potencia_inversores = []
         self.potencia_total_inversores_final = 0
         self.tensao_queda = []
         self.corrente_saida_por_inversor = []
-        self.gerador_texto_introducao2 = ""
+        self._list_introducao2 = []
         self.lista_equacoes_protecao_inversores = []
+
+    def calculate(self) -> "ObjetosCalculados":
+        """Run all engineering calculations and populate internal state.
+
+        Separated from __init__ so that:
+        - The object can be inspected / partially configured before computing.
+        - Individual steps can be mocked in unit tests.
+        - The caller is explicit about when computation happens.
+
+        Returns self to allow fluent chaining:
+            retorno = ObjetosCalculados(projeto).calculate().construtor_dados_memorial()
+        """
         self.checagem_sistemas_instalados()
         self.checagem_inversores()
         self.checagem_placas()
         self.calculo_disposicao_placas()
-        # retorno
+        return self
 
     def checagem_sistemas_instalados(self):
         sistemas_instalados = self.projeto.sistema_instalado
@@ -69,26 +81,34 @@ class ObjetosCalculados(Calculos):
             raise ValueError("Número de fases do inversor inválido")
 
     def get_classe_codigo(self):
+        """Retorna o código de classe da ANEEL para o tipo de consumo."""
+        CLASSE_PARA_CODIGO = {
+            "residencial": "B1",
+            "rural": "B2",
+            "comercial": "B3",
+        }
         classe_cliente = self.projeto.classe_consumo
-        if classe_cliente == "residencial":
-            classe_codigo = "B1"
-        elif classe_cliente == "rural":
-            classe_codigo = "B2"
-        elif classe_cliente == "comercial":
-            classe_codigo = "B3"
+        if classe_cliente not in CLASSE_PARA_CODIGO:
+            raise ValueError(
+                f"Classe de consumo inválida: '{classe_cliente}'. "
+                f"Valores aceitos: {list(CLASSE_PARA_CODIGO)}"
+            )
+        return CLASSE_PARA_CODIGO[classe_cliente]
 
-        return classe_codigo
-
-    def get_tensao_local(self):
+    def get_tensao_local(self) -> int:
+        """Retorna a tensão local em volts com base no tipo de fornecimento."""
+        FORNECIMENTO_PARA_TENSAO = {
+            "monofasico": 220,
+            "bifasico": 220,
+            "trifasico": 380,
+        }
         tensao_cliente = self.projeto.tipo_fornecimento
-        if tensao_cliente == "monofasico":
-            tensao_local = 220
-        elif tensao_cliente == "bifasico":
-            tensao_local = 220
-        elif tensao_cliente == "trifasico":
-            tensao_local = 380
-
-        return tensao_local
+        if tensao_cliente not in FORNECIMENTO_PARA_TENSAO:
+            raise ValueError(
+                f"Tipo de fornecimento inválido: '{tensao_cliente}'. "
+                f"Valores aceitos: {list(FORNECIMENTO_PARA_TENSAO)}"
+            )
+        return FORNECIMENTO_PARA_TENSAO[tensao_cliente]
 
     def checagem_inversores(self):
         marca_de_inversores = []
@@ -137,121 +157,58 @@ class ObjetosCalculados(Calculos):
 
             self.texto_cabos.append(cabo)
             self.texto_2_protecao_inversor.append(disjuntor_protecao)
-            self.texto_protecao_inversor += (
-                f" {quantidade_inversor} disjuntor de {disjuntor_protecao} A,"
+            self._list_protecao_inversor.append(
+                f"{quantidade_inversor} disjuntor de {disjuntor_protecao} A"
             )
-            self.texto_corrente_max_cabo += (
-                self.corrente_max_cabo(corrente_saida_inversor) + ","
+            self._list_corrente_max_cabo.append(
+                self.corrente_max_cabo(corrente_saida_inversor)
             )
-            self.texto_inversor_memorial += f" {quantidade_inversor} inversor {marca_de_inversores[-1]} {modelo_inversores},"
-            self.gerador_texto_introducao2 += f"{modelo_inversores} "
+            self._list_inversor_memorial.append(
+                f"{quantidade_inversor} inversor {marca_de_inversores[-1]} {modelo_inversores}"
+            )
+            self._list_introducao2.append(modelo_inversores)
 
+        # deduplicate brands for the introduction sentence
+        seen = set()
+        unique_marcas = []
         for marca in marca_de_inversores:
-            if marca_de_inversores.count(marca) > 1:
-                marca_de_inversores.remove(marca)
-        self.gerador_texto_introducao = ", ".join(marca_de_inversores)
+            if marca not in seen:
+                seen.add(marca)
+                unique_marcas.append(marca)
+        self.gerador_texto_introducao = ", ".join(unique_marcas)
+
+    def _monta_texto_placa_individual(self, item, placa_attr, qtd_index):
+        """Shared helper used for both placa and placa2 to avoid duplication."""
+        sistemas_instalados = self.projeto.sistema_instalado[item]
+        qtd_lista = list(
+            sistemas_instalados.quantidade_total_placas_do_sistema.model_dump().values()
+        )
+        placa = getattr(sistemas_instalados, placa_attr)
+        quantidade = qtd_lista[qtd_index]
+
+        self._list_tensao_individual_paineis.append(str(placa.tensao_maxima_potencia))
+        self._list_potencia_placa.append(str(placa.potencia_placa))
+        self._list_tensao_circuito_aberto.append(str(placa.tensao_pico))
+        self._list_corrente_maxima_potencia.append(str(placa.corrente_maxima_potencia))
+        self._list_corrente_cc.append(str(placa.corrente_curtocircuito))
+
+        sep = "  " if qtd_index == 0 else " "
+        return f"{quantidade}{sep}modulos {placa.marca_placa} {placa.modelo_placa}, de {placa.potencia_placa}Wp"
 
     def checagem_placas(self):
-
-        def monta_texto_placa(item):
-
-            quantidade_placas = list(
-                self.projeto
-                .sistema_instalado[item]
-                .quantidade_total_placas_do_sistema.model_dump()
-                .values()
-            )
-            marca_placas = str(
-                self.projeto.sistema_instalado[item].placa.marca_placa
-            )
-            modelo_placas = str(
-                self.projeto.sistema_instalado[item].placa.modelo_placa
-            )
-            potencia_placa = str(
-                self.projeto.sistema_instalado[item].placa.potencia_placa
-            )
-            tensao_individual = str(
-                self.projeto.sistema_instalado[
-                    item
-                ].placa.tensao_maxima_potencia
-            )
-            tensao_circuito_aberto = str(
-                self.projeto.sistema_instalado[item].placa.tensao_pico
-            )
-            corrente_maxima_potencia = str(
-                self.projeto.sistema_instalado[
-                    item
-                ].placa.corrente_maxima_potencia
-            )
-            corrente_cc = str(
-                self.projeto.sistema_instalado[
-                    item
-                ].placa.corrente_curtocircuito
-            )
-            self.texto_tensao_individual_paineis += f" {tensao_individual},"
-            self.texto_potencia_placa += f" {potencia_placa},"
-            self.texto_tensao_circuito_aberto += f" {tensao_circuito_aberto},"
-            self.corrente_maxima_potencia += f" {corrente_maxima_potencia},"
-            self.corrente_cc += f" {corrente_cc},"
-            texto_por_placa = f" {quantidade_placas[0]} modulos  {marca_placas} {modelo_placas}, de {potencia_placa}Wp"
-
-            return texto_por_placa
-
-        def monta_texto_placa2(item):
-
-            quantidade_placas2 = list(
-                self.projeto
-                .sistema_instalado[item]
-                .quantidade_total_placas_do_sistema.model_dump()
-                .values()
-            )
-            marca_placas2 = str(
-                self.projeto.sistema_instalado[item].placa2.marca_placa
-            )
-            modelo_placas2 = str(
-                self.projeto.sistema_instalado[item].placa2.modelo_placa
-            )
-            potencia_placa2 = str(
-                self.projeto.sistema_instalado[item].placa2.potencia_placa
-            )
-            tensao_individual2 = str(
-                self.projeto.sistema_instalado[
-                    item
-                ].placa2.tensao_maxima_potencia
-            )
-            tensao_circuito_aberto2 = str(
-                self.projeto.sistema_instalado[item].placa2.tensao_pico
-            )
-            corrente_maxima_potencia2 = str(
-                self.projeto.sistema_instalado[
-                    item
-                ].placa2.corrente_maxima_potencia
-            )
-            corrente_cc2 = str(
-                self.projeto.sistema_instalado[
-                    item
-                ].placa2.corrente_curtocircuito
-            )
-            self.texto_tensao_individual_paineis += f" {tensao_individual2},"
-            self.texto_potencia_placa += f" {potencia_placa2},"
-            self.texto_tensao_circuito_aberto += f" {tensao_circuito_aberto2},"
-            self.corrente_maxima_potencia += f" {corrente_maxima_potencia2},"
-            self.corrente_cc += f" {corrente_cc2},"
-            texto_por_placa2 = f" {quantidade_placas2[1]}  modulos {marca_placas2} {modelo_placas2}, de {potencia_placa2}Wp"
-
-            return texto_por_placa2
-
         for item in range(self.quantidade_sistemas):
             sistemas_instalados = self.projeto.sistema_instalado[item]
             quantidade_placas_lista = list(
                 sistemas_instalados.quantidade_total_placas_do_sistema.model_dump().values()
             )
 
-            texto_da_placa = monta_texto_placa(item)
-            self.texto_placas_memorial += texto_da_placa
+            self._list_placas_memorial.append(
+                self._monta_texto_placa_individual(item, "placa", 0)
+            )
             if quantidade_placas_lista[1]:
-                texto_da_placa2 = monta_texto_placa2(item)
-                self.texto_placas_memorial += texto_da_placa2
+                self._list_placas_memorial.append(
+                    self._monta_texto_placa_individual(item, "placa2", 1)
+                )
 
     # conta a quantidade de placas de um sistema considerando que um sistema só vai ter no máximo dois tipos de placa.
     def conta_placa_do_sistema(self, i):
@@ -378,79 +335,105 @@ class ObjetosCalculados(Calculos):
         )
         return equacao4
 
+    # -----------------------------------------------------------------------
+    # Private builders — each assembles one logical group of DTO fields
+    # -----------------------------------------------------------------------
+
+    def _build_endereco(self) -> dict:
+        """Location and date fields for the work address."""
+        hoje = ObjetosCalculados.data_de_hoje()
+        endereco = self.projeto.endereco_obra
+        return {
+            "logradouro_obra": endereco["logradouro_obra"],
+            "numero_obra": endereco["numero_obra"],
+            "complemento_obra": endereco.get("complemento_obra", ""),
+            "bairro_obra": endereco["bairro_obra"],
+            "cidade_obra": endereco["cidade_obra"],
+            "estado_obra": endereco["estado_obra"],
+            "cep_obra": endereco["cep_obra"],
+            "latitude_obra": endereco.get("latitude_obra", ""),
+            "longitude_obra": endereco.get("longitude_obra", ""),
+            "data_hoje": hoje.strftime("%d de %B de %Y"),
+            "data_futura": ObjetosCalculados.data_futura(hoje),
+        }
+
+    def _build_cliente(self) -> dict:
+        """Client identification fields. Optional fields default to empty string."""
+        c = self.projeto.cliente
+        return {
+            "nome_cliente": c["nome_cliente"],
+            "cpf": c["cpf"],
+            "rg": c["rg"],
+            "razao_social": c.get("razao_social", ""),
+            "nome_fantasia": c.get("nome_fantasia", ""),
+            "cnpj": c.get("cnpj", ""),
+            "telefone": c["telefone_cliente"],
+            "email": c["email_cliente"],
+            "data_nascimento": c["data_nascimento"],
+        }
+
+    def _build_eletrico(self) -> dict:
+        """Electrical characteristics of the consumption unit."""
+        p = self.projeto
+        return {
+            "classe_consumo": p.classe_consumo1,
+            "carga_instalada_kw": p.carga_instalada_kw,
+            "energia_media_mensal_kwh": round(p.energia_media_mensal_kwh, 2),
+            "tensao_local": self.get_tensao_local(),
+            "tipo_fornecimento": p.tipo_fornecimento,
+            "disjuntor_geral": p.disjuntor_geral_amperes,
+            "numero_uc": p.numero_unidade_consumidora,
+        }
+
+    def _build_textos_e_calculos(self, potencia_efetiva: float) -> dict:
+        """Composed text strings, panel/inverter data, and derived calculations."""
+        return {
+            # --- Composed text strings (joined, no trailing commas) ---
+            "texto_placas_memorial": ", ".join(self._list_placas_memorial),
+            "texto_inversor_memorial": ", ".join(self._list_inversor_memorial),
+            "texto_potencia_placa": ", ".join(self._list_potencia_placa),
+            "texto_tensao_individual_paineis": ", ".join(self._list_tensao_individual_paineis),
+            "texto_protecao_inversor": ", ".join(self._list_protecao_inversor),
+            "texto_corrente_max_cabo": ", ".join(self._list_corrente_max_cabo),
+            "texto_cabos": self.texto_cabos,
+            "texto_2_protecao_inversor": self.texto_2_protecao_inversor,
+            "gerador_texto_introducao": self.gerador_texto_introducao,
+            "gerador_texto_introducao2": " ".join(self._list_introducao2),
+            "corrente_mp": ", ".join(self._list_corrente_maxima_potencia),
+            "corrente_cc": ", ".join(self._list_corrente_cc),
+            "tensao_circuito_aberto": ", ".join(self._list_tensao_circuito_aberto),
+            # --- Panel data ---
+            "tipo_celula": self.projeto.sistema_instalado[0].placa.tipo_celula,
+            "quantidade_final_placas": self.quantidade_final_placas,
+            "potencia_total_paineis_final": self.potencia_total_paineis_final,
+            # --- Inverter data ---
+            "numero_total_strings": self.numero_total_strings,
+            "quantidade_final_de_placas_por_inversor": self.quantidade_final_de_placas_por_inversor,
+            "potencia_inversores": self.potencia_inversores,
+            "potencia_efetiva": potencia_efetiva,
+            "corrente_saida_por_inversor": self.corrente_saida_por_inversor,
+            "inversor_tensao": self.inversor_tensao,
+            # --- Derived calculations ---
+            "energia_gerada_mensal": round(self.energia_gerada(potencia_efetiva), 2),
+            "queda_tensao": self.tensao_queda,
+            # --- Equations ---
+            "equacao": self.equacao_demanda(),
+            "equacao2": self.calculo_fator_de_carga(),
+            "equacao3": self.conta_equacoes_inversor(),
+            "equacao4": self.equacao_queda_tensao(),
+        }
+
+    # -----------------------------------------------------------------------
+    # Public constructor — orchestrates builders into the final DTO
+    # -----------------------------------------------------------------------
+
     def construtor_dados_memorial(self) -> RetornoProjetoCompleto:
         potencia_efetiva = round(
             self.calculo_potencia_efetiva(self.potencia_total_paineis_final), 2
         )
-
         return RetornoProjetoCompleto(
-            logradouro_obra=self.projeto.endereco_obra["logradouro_obra"],
-            numero_obra=self.projeto.endereco_obra["numero_obra"],
-            complemento_obra=self.projeto.endereco_obra["complemento_obra"],
-            bairro_obra=self.projeto.endereco_obra["bairro_obra"],
-            cidade_obra=self.projeto.endereco_obra["cidade_obra"],
-            estado_obra=self.projeto.endereco_obra["estado_obra"],
-            data_futura=ObjetosCalculados.data_futura(
-                ObjetosCalculados.data_de_hoje()
-            ),
-            cep_obra=self.projeto.endereco_obra["cep_obra"],
-            latitude_obra=self.projeto.endereco_obra["latitude_obra"],
-            longitude_obra=self.projeto.endereco_obra["longitude_obra"],
-            nome_cliente=self.projeto.cliente["nome_cliente"],
-            cpf=self.projeto.cliente["cpf"],
-            rg=self.projeto.cliente["rg"],
-            razao_social=self.projeto.cliente["razao_social"],
-            nome_fantasia=self.projeto.cliente["nome_fantasia"],
-            cnpj=self.projeto.cliente["cnpj"],
-            telefone=self.projeto.cliente["telefone_cliente"],
-            email=self.projeto.cliente["email_cliente"],
-            data_nascimento=self.projeto.cliente["data_nascimento"],
-            data_hoje=ObjetosCalculados.data_de_hoje().strftime(
-                "%d de %B de %Y"
-            ),
-            # dados elétricos do estabelecimento
-            classe_consumo=self.projeto.classe_consumo1,
-            carga_instalada_kw=self.projeto.carga_instalada_kw,
-            energia_media_mensal_kwh=round(
-                self.projeto.energia_media_mensal_kwh, 2
-            ),
-            tensao_local=self.get_tensao_local(),
-            tipo_fornecimento=self.projeto.tipo_fornecimento,
-            disjuntor_geral=self.projeto.disjuntor_geral_amperes,
-            # textos do memorial descritivo
-            texto_placas_memorial=self.texto_placas_memorial,
-            texto_inversor_memorial=self.texto_inversor_memorial,
-            texto_potencia_placa=self.texto_potencia_placa,
-            texto_tensao_individual_paineis=self.texto_tensao_individual_paineis,
-            texto_protecao_inversor=self.texto_protecao_inversor,
-            texto_corrente_max_cabo=self.texto_corrente_max_cabo,
-            texto_cabos=self.texto_cabos,
-            texto_2_protecao_inversor=self.texto_2_protecao_inversor,
-            gerador_texto_introducao=self.gerador_texto_introducao,
-            gerador_texto_introducao2=self.gerador_texto_introducao2,
-            corrente_mp=self.corrente_maxima_potencia,
-            corrente_cc=self.corrente_cc,
-            tensao_circuito_aberto=self.texto_tensao_circuito_aberto,
-            # dados painel
-            tipo_celula=self.projeto.sistema_instalado[0].placa.tipo_celula,
-            quantidade_final_placas=self.quantidade_final_placas,
-            potencia_total_paineis_final=self.potencia_total_paineis_final,
-            # dados inversor
-            numero_total_strings=self.numero_total_strings,
-            quantidade_final_de_placas_por_inversor=self.quantidade_final_de_placas_por_inversor,
-            potencia_inversores=self.potencia_inversores,
-            potencia_efetiva=potencia_efetiva,
-            corrente_saida_por_inversor=self.corrente_saida_por_inversor,
-            inversor_tensao=self.inversor_tensao,
-            # calculos adicionais
-            energia_gerada_mensal=round(
-                self.energia_gerada(potencia_efetiva), 2
-            ),
-            queda_tensao=self.tensao_queda,
-            numero_uc=self.projeto.numero_unidade_consumidora,
-            # equacoes
-            equacao=self.equacao_demanda(),
-            equacao2=self.calculo_fator_de_carga(),
-            equacao3=self.conta_equacoes_inversor(),
-            equacao4=self.equacao_queda_tensao(),
+            **self._build_endereco(),
+            **self._build_cliente(),
+            **self._build_eletrico(),
+            **self._build_textos_e_calculos(potencia_efetiva),
         )
