@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Procuração Particular – {{ dados.cliente.nome_cliente }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 4cm;
+        }
+
+        .content {
+            text-align: justify;
+            margin-bottom: 8cm;
+        }
+
+        .signature-area {
+            text-align: center;
+            margin-top: 2cm;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 80%;
+            margin: 0.5cm auto;
+        }
+
+        .signature-details {
+            font-size: 11pt;
+        }
+
+        .date {
+            margin-top: 1cm;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">PROCURAÇÃO PARTICULAR</div>
+
+    <div class="content">
+        {{ texto.texto_procuracao() | safe }}
+    </div>
+
+    <div class="signature-area">
+        <div class="signature-line"></div>
+        <div class="signature-details">
+            <strong>{{ dados.cliente.nome_cliente }}</strong><br>
+            CPF: {{ dados.cliente.cpf }}
+        </div>
+        <div class="date">
+            {{ data }}
+        </div>
+    </div>
+</body>
+
+</html>

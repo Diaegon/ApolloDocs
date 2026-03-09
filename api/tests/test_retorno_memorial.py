@@ -17,83 +17,10 @@ from dataclasses import fields
 import pytest
 
 from api.schemas.projetos.memorial import ProjetoMemorial
+from api.tests.test_payloads import MEMORIAL_PAYLOAD, MEMORIAL_PAYLOAD1_2
 from src.createproject import ProjectFactory
 from src.domain.creatememorialobject import ObjetosCalculados
 from src.schemas.modelreturnobject import RetornoProjetoCompleto
-
-# ---------------------------------------------------------------------------
-# Standard payload (mirrors test_docs.py MEMORIAL_PAYLOAD)
-# ---------------------------------------------------------------------------
-
-SISTEMA_INSTALADO = {
-    "inversor": {
-        "id_inversor": None,
-        "marca_inversor": "Fronius",
-        "modelo_inversor": "Symo 5.0",
-        "potencia_inversor": 5.0,
-        "numero_fases": "monofasico",
-        "tipo_de_inversor": "string",
-        "numero_mppt": 2,
-    },
-    "quantidade_inversor": 1,
-    "quantidade_total_placas_do_sistema": {
-        "quantidade_placas": 10,
-        "quantidade_placas2": None,
-    },
-    "placa": {
-        "id_placa": None,
-        "marca_placa": "Canadian Solar",
-        "modelo_placa": "CS6R-500MS",
-        "potencia_placa": 500.0,
-        "tipo_celula": "Monocristalino",
-        "tensao_pico": 49.3,
-        "corrente_curtocircuito": 13.58,
-        "tensao_maxima_potencia": 41.8,
-        "corrente_maxima_potencia": 11.97,
-        "eficiencia_placa": None,
-    },
-    "placa2": None,
-}
-
-MEMORIAL_PAYLOAD = {
-    "id_projeto": 1,
-    "cliente": {
-        "id_cliente": 1,
-        "nome_cliente": "João da Silva",
-        "cpf": "000.000.000-00",
-        "data_nascimento": "01/01/1990",
-        "razao_social": "",
-        "nome_fantasia": "",
-        "cnpj": "",
-        "rg": "0000000",
-        "telefone_cliente": "85 999999999",
-        "email_cliente": "joao@email.com",
-    },
-    "endereco_obra": {
-        "logradouro_obra": "Rua das Flores",
-        "numero_obra": "100",
-        "complemento_obra": "",
-        "cep_obra": "60000-000",
-        "bairro_obra": "Centro",
-        "cidade_obra": "Fortaleza",
-        "estado_obra": "CE",
-        "latitude_obra": "-3.7172",
-        "longitude_obra": "-38.5431",
-    },
-    "numero_unidade_consumidora": "1234567890",
-    "carga_instalada_kw": 10.0,
-    "disjuntor_geral_amperes": 40.0,
-    "energia_media_mensal_kwh": 400.0,
-    "classe_consumo1": "residencial",
-    "tipo_fornecimento": "monofasico",
-    "ramal_energia": "aereo",
-    "data_projeto": "2026-03-06",
-    "quantidade_sistemas_instalados": 1,
-    "sistema_instalado1": SISTEMA_INSTALADO,
-    "sistema_instalado2": None,
-    "sistema_instalado3": None,
-}
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

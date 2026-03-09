@@ -1,48 +1,43 @@
+"""Procuração PDF builder — Jinja2 + WeasyPrint implementation.
+"""
+
 from datetime import datetime
 from io import BytesIO
+from pathlib import Path
 
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+from jinja2 import Environment, FileSystemLoader
+from weasyprint import HTML
 
-from src.domain.components.tablesmemorial import TablesBuilder
 from src.domain.texts.text_procuracao import TextoProcuracao
-from src.schemas.tableschemas import styles
+
+# Path to the templates directory
+_TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 
 
 class Procuracao:
     def __init__(self, projeto):
         self.projeto = projeto
-        self.buffer = BytesIO()
         self.texto = TextoProcuracao(projeto)
-        self.tabela = TablesBuilder(projeto)
         self.data = datetime.now().strftime("%d/%m/%Y")
-        self.doc = SimpleDocTemplate(
-            self.buffer,
-            pagesize=A4,
-            leftMargin=2 * cm,
-            rightMargin=2 * cm,
-            topMargin=2 * cm,
-            bottomMargin=2 * cm,
-        )
+        self._html: str = ""
+        self.buffer = BytesIO()
 
-    def gerar_procuracao(self):
-        procuracao = []
-        procuracao.append(Paragraph("PROCURAÇÃO PARTICULAR", styles["Title"]))
-        procuracao.append(Spacer(1, 4 * cm))
-        procuracao.append(
-            Paragraph(self.texto.texto_procuracao(), styles["CorpoTexto"])
-        )
-        procuracao.append(Spacer(1, 12 * cm))
-        procuracao.append(
-            self.tabela.tabela_assinatura(
-                self.projeto.cliente.nome_cliente,
-                self.projeto.cliente.cpf,
-                self.data,
-            )
-        )
+    def gerar_procuracao(self) -> None:
+        """Render the Jinja2 template and write the PDF bytes to self.buffer."""
+        context = {
+            "dados": self.projeto,
+            "texto": self.texto,
+            "data": self.data,
+        }
 
-        self.doc.build(procuracao)
+        env = Environment(loader=FileSystemLoader(str(_TEMPLATES_DIR)))
+        template = env.get_template("procuracao.html")
+        self._html = template.render(**context)
 
-    def to_bytes(self):
+        pdf_bytes = HTML(string=self._html).write_pdf()
+        self.buffer = BytesIO(pdf_bytes)
+        self.buffer.seek(0)
+
+    def to_bytes(self) -> bytes:
+        """Return the generated PDF as raw bytes."""
         return self.buffer.getvalue()

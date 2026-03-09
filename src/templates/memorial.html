@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Memorial Descritivo – {{ dados.nome_cliente }}</title>
+<style>
+  /* ------------------------------------------------------------------ */
+  /*  Page setup                                                         */
+  /* ------------------------------------------------------------------ */
+  @page {
+    size: A4;
+    margin: 2cm;
+    @bottom-center {
+      content: "Página " counter(page);
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 9pt;
+    }
+  }
+
+  /* Each section with this class starts on a new page */
+  .page-break { page-break-before: always; }
+
+  /* ------------------------------------------------------------------ */
+  /*  Typography                                                         */
+  /* ------------------------------------------------------------------ */
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #111;
+  }
+
+  h1.doc-title {
+    text-align: center;
+    font-size: 22pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 0.3cm;
+  }
+
+  h2.doc-subtitle {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 1cm;
+  }
+
+  h2.section-title {
+    font-size: 13pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 0.8cm;
+    margin-bottom: 0.3cm;
+    border-bottom: 1px solid #555;
+    padding-bottom: 2px;
+  }
+
+  h3.subsection-title {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-top: 0.5cm;
+    margin-bottom: 0.2cm;
+  }
+
+  h4.cover-detail {
+    font-size: 11pt;
+    text-align: left;
+    margin-top: 0.3cm;
+  }
+
+  p.body-text {
+    text-align: justify;
+    margin-bottom: 0.3cm;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  Tables                                                             */
+  /* ------------------------------------------------------------------ */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0.5cm;
+    font-size: 10pt;
+  }
+
+  table.narrow {
+    width: auto;
+  }
+
+  th, td {
+    border: 1px solid #444;
+    padding: 4px 8px;
+  }
+
+  th {
+    background-color: #dde;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  td.label-col {
+    width: 60%;
+  }
+
+  /* Table of Contents */
+  table.toc {
+    border: none;
+    margin-top: 0.5cm;
+  }
+
+  table.toc td {
+    border: none;
+    padding: 2px 4px;
+  }
+
+  td.toc-title { text-align: left; }
+  td.toc-dots  { letter-spacing: 2px; text-align: center; color: #555; }
+  td.toc-page  { text-align: right; width: 2cm; }
+
+  /* ------------------------------------------------------------------ */
+  /*  Equations — rendered as embedded PNG images                       */
+  /* ------------------------------------------------------------------ */
+  .equation-block {
+    text-align: center;
+    margin: 0.5cm 0;
+  }
+
+  .equation-block img {
+    max-width: 14cm;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  Images                                                             */
+  /* ------------------------------------------------------------------ */
+  .doc-image {
+    display: block;
+    margin: 0.5cm auto;
+  }
+
+  .img-diagram   { width: 10cm; height: 7cm;  }
+  .img-aviso     { width: 18cm; }
+  .img-assinatura{ width: 15cm; height: 4cm;  }
+</style>
+</head>
+<body>
+
+<!-- ================================================================== -->
+<!--  CAPA                                                               -->
+<!-- ================================================================== -->
+<h1 class="doc-title">Memorial Descritivo</h1>
+<h2 class="doc-subtitle">Projeto de Geração Distribuída</h2>
+
+<h4 class="cover-detail">
+  PROJETO PARA IMPLANTAÇÃO DE GERADOR FOTOVOLTAICO NA ÁREA
+  {{ dados.classe_consumo | upper }} DO(A) CLIENTE: {{ dados.nome_cliente | upper }}
+</h4>
+<h4 class="cover-detail">Local: {{ dados.cidade_obra }}</h4>
+<h4 class="cover-detail">{{ dados.data_hoje }}</h4>
+
+<!-- ================================================================== -->
+<!--  SUMÁRIO                                                            -->
+<!-- ================================================================== -->
+<div class="page-break">
+<h2 class="section-title">Sumário</h2>
+
+<table class="toc">
+  {% for titulo, pagina in toc %}
+  <tr>
+    <td class="toc-title">{{ titulo }}</td>
+    <td class="toc-dots">.........................................</td>
+    <td class="toc-page">{{ pagina }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+
+<!-- ================================================================== -->
+<!--  1 – INTRODUÇÃO                                                     -->
+<!-- ================================================================== -->
+<div class="page-break">
+<h2 class="section-title">1 – Introdução</h2>
+<p class="body-text">{{ texto.texto_introducao() }}</p>
+
+<h3 class="subsection-title">1.1 – Identificação do Cliente</h3>
+<table>
+  <tr><td>UC</td><td>{{ dados.numero_uc }}</td></tr>
+  <tr><td>Classe / Fornecimento</td><td>{{ dados.classe_consumo | capitalize }} – {{ dados.tipo_fornecimento }}</td></tr>
+  <tr><td>Nome do Cliente</td><td>{{ dados.nome_cliente }}</td></tr>
+  <tr><td>Endereço</td><td>{{ dados.logradouro_obra }}, {{ dados.numero_obra }} {{ dados.complemento_obra }}, {{ dados.bairro_obra }}, {{ dados.cidade_obra }} – {{ dados.estado_obra }}</td></tr>
+  <tr><td>CEP</td><td>{{ dados.cep_obra }}</td></tr>
+  <tr><td>CPF / CNPJ</td><td>{{ dados.cpf }}</td></tr>
+</table>
+
+
+<!-- ================================================================== -->
+<!--  2 – LOCALIZAÇÃO                                                    -->
+<!-- ================================================================== -->
+
+<h2 class="section-title">2 – Localização do Gerador Fotovoltaico</h2>
+<h3 class="subsection-title">2.1 – Planta de Situação do Gerador</h3>
+<p class="body-text">{{ texto.texto_loc() }}</p>
+
+<table class="narrow">
+  <tr><th colspan="3">Coordenadas – decimais – WGS 84</th></tr>
+  <tr>
+    <td>Local de implantação do Gerador Fotovoltaico</td>
+    <td>Lat: {{ dados.latitude_obra }}</td>
+    <td>Long: {{ dados.longitude_obra }}</td>
+  </tr>
+</table>
+
+<p class="body-text">{{ texto.texto_loc2() }}</p>
+</div>
+
+<!-- ================================================================== -->
+<!--  3 – CARGA INSTALADA                                               -->
+<!-- ================================================================== -->
+<div class="page-break">
+<h2 class="section-title">3 – Carga Instalada</h2>
+<p class="body-text">{{ texto.texto_carginst() }}</p>
+
+<h3 class="subsection-title">3.1 – Cálculo da Demanda Média</h3>
+<p class="body-text">{{ texto.texto_calculo_demanda() }}</p>
+<div class="equation-block">
+  <img src="data:image/png;base64,{{ eq_demanda_b64 }}" alt="Equação demanda" />
+</div>
+<p class="body-text">{{ texto.texto_calculo_demanda2() }}</p>
+
+<h3 class="subsection-title">3.2 – Cálculo do Fator de Carga Médio</h3>
+<p class="body-text">{{ texto.texto_calculo_fc() }}</p>
+<div class="equation-block">
+  <img src="data:image/png;base64,{{ eq_fator_carga_b64 }}" alt="Equação fator de carga" />
+</div>
+
+
+<!-- ================================================================== -->
+<!--  4 – GERADOR FOTOVOLTAICO                                          -->
+<!-- ================================================================== -->
+<h2 class="section-title">4 – Gerador Fotovoltaico</h2>
+<p class="body-text">{{ texto.texto_geradorfv() }}</p>
+
+<table>
+  <tr><th class="label-col">Característica</th><th>Valor</th></tr>
+  <tr><td>Potência nominal máx. (Pmax)</td><td>{{ dados.texto_potencia_placa }} Wp</td></tr>
+  <tr><td>Tensão operacional ótima (Vmp)</td><td>{{ dados.texto_tensao_individual_paineis }} V</td></tr>
+  <tr><td>Corrente operacional ótima (Imp)</td><td>{{ dados.corrente_mp }} A</td></tr>
+  <tr><td>Tensão circuito aberto (Voc)</td><td>{{ dados.tensao_circuito_aberto }} V</td></tr>
+  <tr><td>Corrente curto-circuito (Isc)</td><td>{{ dados.corrente_cc }} A</td></tr>
+</table>
+
+<p class="body-text">{{ texto.texto_potenciafv() }}</p>
+
+<h3 class="subsection-title">4.1 – Cálculo da Energia Média Gerada</h3>
+<p class="body-text">{{ texto.texto_calculo_enegiagerada() }}</p>
+
+
+<!-- ================================================================== -->
+<!--  5 – DIAGRAMAS BÁSICOS                                             -->
+<!-- ================================================================== -->
+
+<h2 class="section-title">5 – Diagramas Básicos</h2>
+<p class="body-text">{{ texto.texto_diagramas() }}</p>
+<img class="doc-image img-diagram"
+     src="data:image/png;base64,{{ img_diagrama_b64 }}"
+     alt="Diagrama solar" />
+
+<h3 class="subsection-title">5.1 – Parametrização do Inversor</h3>
+<p class="body-text">{{ texto.texto_parametrizacao() }}</p>
+
+<h3 class="subsection-title">5.1.1 – Ajuste de Sobre e Subtensão</h3>
+<table>
+  <tr><th>Faixa de tensão no ponto de conexão [V]</th><th>Tempo de desconexão [s]</th></tr>
+  <tr><td>TL &gt; 231</td><td>0,2 s</td></tr>
+  <tr><td>189 ≤ TL ≤ 231</td><td>Operação Normal</td></tr>
+  <tr><td>TL &lt; 195,5</td><td>0,2 s</td></tr>
+</table>
+
+<h3 class="subsection-title">5.1.2 – Ajustes dos Limites de Frequência</h3>
+<table>
+  <tr><th>Faixa de frequência no ponto de conexão (Hz)</th><th>Tempo de desconexão [s]</th></tr>
+  <tr><td>f ≤ 57,5</td><td>0,2</td></tr>
+  <tr><td>59,9 &lt; f ≤ 60,1</td><td>Operação normal</td></tr>
+  <tr><td>f &gt; 62,5</td><td>0,2</td></tr>
+</table>
+
+<h3 class="subsection-title">5.1.3 – Ajustes do Limite do Fator de Potência</h3>
+<table>
+  <tr>
+    <th>Potência Nominal (W) – Pn</th>
+    <th>Faixa de fator de potência</th>
+    <th>Fator de potência (fábrica)</th>
+  </tr>
+  <tr>
+    <td>{{ dados.potencia_inversores | join(", ") }}</td>
+    <td>0,95 indutivo – 0,95 capacitivo</td>
+    <td>1</td>
+  </tr>
+</table>
+
+<!-- ================================================================== -->
+<!--  6 – INSTALAÇÃO ELÉTRICA                                           -->
+<!-- ================================================================== -->
+<h2 class="section-title">6 – Instalação Elétrica</h2>
+<p class="body-text">{{ texto.texto_instalacao() }}</p>
+
+<h3 class="subsection-title">6.1 – Diagrama Unifilar Geral</h3>
+<p class="body-text">{{ texto.texto_diagramauni() }}</p>
+
+<h3 class="subsection-title">6.2 – Dimensionamento da Proteção e Alimentação do Gerador Fotovoltaico</h3>
+<p class="body-text">{{ texto.texto_dimensionamento_protecao() }}</p>
+
+{% for eq_b64 in eq_corrente_list_b64 %}
+<div class="equation-block">
+  <img src="data:image/png;base64,{{ eq_b64 }}" alt="Equação corrente inversor" />
+</div>
+{% endfor %}
+
+<p class="body-text">{{ texto.texto_dimensionamento_protecao2() }}</p>
+
+<div class="equation-block">
+  <img src="data:image/png;base64,{{ eq_queda_tensao_b64 }}" alt="Equação queda de tensão" />
+</div>
+
+<!-- Voltage drop table -->
+<table>
+  <tr><td>ρ – resistividade do cobre</td><td>0,0173</td></tr>
+  <tr><td>L<sub>c</sub> – comprimento do condutor</td><td>10 m</td></tr>
+  <tr><td>I<sub>c</sub> – corrente do condutor</td><td>{{ dados.corrente_saida_por_inversor | join(", ") }} A</td></tr>
+  <tr><td>cos φ – fator de potência</td><td>1</td></tr>
+  <tr><td>S<sub>c</sub> – seção reta do condutor</td><td>{{ dados.texto_cabos | join(", ") }}</td></tr>
+  <tr><td>V<sub>f</sub> – tensão</td><td>{{ dados.inversor_tensao | join(", ") }} V</td></tr>
+</table>
+
+<p class="body-text">{{ texto.texto_dimensionamento_protecao3() }}</p>
+
+<h3 class="subsection-title">6.3 – Coordenação entre os Disjuntores</h3>
+<p class="body-text">{{ texto.texto_disjuntores() }}</p>
+
+<!-- ================================================================== -->
+<!--  7 – SINALIZAÇÃO                                                   -->
+<!-- ================================================================== -->
+<h2 class="section-title">7 – Sinalização</h2>
+<p class="body-text">{{ texto.texto_sinalizacao() }}</p>
+<img class="doc-image img-aviso"
+     src="data:image/png;base64,{{ img_aviso_b64 }}"
+     alt="Placa de aviso" />
+
+<!-- ================================================================== -->
+<!--  8 – RESPONSÁVEL TÉCNICO                                           -->
+<!-- ================================================================== -->
+<h2 class="section-title">8 – Responsável Técnico</h2>
+<br/><br/><br/>
+<img class="doc-image img-assinatura"
+     src="data:image/png;base64,{{ img_assinatura_b64 }}"
+     alt="Assinatura" />
+</div>
+
+</body>
+</html>
