@@ -115,7 +115,7 @@ class ConfiguracaoSistema:
     placa2: Placa | None = None
 
 
-@dataclass()
+@dataclass
 class ProjetoCompleto:
     id_projeto: int
 
@@ -137,7 +137,7 @@ class ProjetoCompleto:
     # quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
 
 
-@dataclass()
+@dataclass
 class RetornoProjetoCompleto:
     # memorial descritivo
     # endereço da obra

@@ -180,6 +180,42 @@ UNIFILAR_PAYLOAD = {
     "sistema_instalado3": None,
 }
 
+COMPLETO_PAYLOAD = {
+    "id_projeto": 1,
+    # Projetista
+    "nome_projetista": "Maria Engenheira",
+    "cft_crea_projetista": "CREA-CE 123456",
+    # Partes
+    "cliente": CLIENTE,
+    "endereco_cliente": {
+        "logradouro_cliente": "Rua das Flores",
+        "numero_casa_cliente": "100",
+        "complemento_casa_cliente": None,
+        "cep_cliente": "60000-000",
+        "bairro_cliente": "Centro",
+        "cidade_cliente": "Fortaleza",
+        "estado_cliente": "CE",
+    },
+    "endereco_obra": ENDERECO_OBRA,
+    "procurador": PROCURADOR,
+    # Dados do projeto
+    "numero_unidade_consumidora": "1234567890",
+    "carga_instalada_kw": 10.0,
+    "disjuntor_geral_amperes": 40.0,
+    "energia_media_mensal_kwh": 400.0,
+    "classe_consumo": "residencial",
+    "tipo_fornecimento": "monofasico",
+    "ramal_energia": "aereo",
+    "tensao_local": 220,
+    "potencia_geracao": 5,
+    "data_projeto": "2026-03-06",
+    # Sistemas
+    "quantidade_sistemas_instalados": 1,
+    "sistema_instalado1": SISTEMA_INSTALADO_1,
+    "sistema_instalado2": None,
+    "sistema_instalado3": None,
+}
+
 FORMULARIO_PAYLOAD = {
     "numero_uc": "1234567890",
     "classe": "residencial",
