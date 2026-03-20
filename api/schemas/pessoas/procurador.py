@@ -1,8 +1,7 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
-class Procurador(BaseModel):
-    id_procurador: int | None = None
+class ProcuradorSchema(BaseModel):
     nome_procurador: str = "[NOME DO PROCURADOR]"
     cpf_procurador: str = "[CPF DO PROCURADOR]"
     rg_procurador: str = "[RG DO PROCURADOR]"
@@ -15,3 +14,13 @@ class Procurador(BaseModel):
     bairro_procurador: str = "[BAIRRO DO PROCURADOR]"
     cidade_procurador: str = "[CIDADE DO PROCURADOR]"
     estado_procurador: str = "[ESTADO DO PROCURADOR]"
+
+class ProcuradorPublic(ProcuradorSchema):
+    id_procurador: int
+    user_id: int
+    model_config = ConfigDict(from_attributes=True)
+
+class ProcuradorList(BaseModel):
+    procuradores: list[ProcuradorPublic]
+
+Procurador = ProcuradorSchema
