@@ -1,13 +1,33 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from api.routers import auth, docs, users
+from api.routers import auth, clientes, docs, procuradores, projetistas, projetos, users
+
+from fastapi.middleware.cors import CORSMiddleware
 
 IMAGE_PATH = "apollodocs_image.png"
 app = FastAPI(title="ApolloDocs API", version="1.0.0")
+
+origins = [
+    "http://localhost:3000",
+    "http://0.0.0.0:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(docs.router)
 app.include_router(users.router)
 app.include_router(auth.router)
+app.include_router(clientes.router)
+app.include_router(procuradores.router)
+app.include_router(projetistas.router)
+app.include_router(projetos.router)
 
 
 @app.get("/", tags=["Landing Page"])
