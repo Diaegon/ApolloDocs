@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 
-from api.schemas.cliente.cliente import Cliente
-from api.schemas.cliente.endereco import EnderecoCliente, EnderecoObra
+from api.schemas.cliente.cliente import ClienteSchema
+from api.schemas.cliente.endereco import EnderecoClienteSchema, EnderecoObraSchema
 from api.schemas.common.enums import (
     classe_consumo,
     ramal_de_energia,
     tensao_fase,
 )
-from api.schemas.pessoas.procurador import Procurador
+from api.schemas.pessoas.procurador import ProcuradorSchema
 from api.schemas.sistema.configuracao import ConfiguracaoSistema
 
 
@@ -51,10 +51,10 @@ class ProjetoTodos(BaseModel):
     cft_crea_projetista: str = "[CFT ou CREA DO PROJETISTA]"
 
     # ── Partes ──────────────────────────────────────────────────────────────
-    cliente: Cliente
-    endereco_cliente: EnderecoCliente
-    endereco_obra: EnderecoObra
-    procurador: Procurador
+    cliente: ClienteSchema
+    endereco_cliente: EnderecoClienteSchema
+    endereco_obra: EnderecoObraSchema
+    procurador: ProcuradorSchema
 
     # ── Dados do projeto ────────────────────────────────────────────────────
     numero_unidade_consumidora: str
