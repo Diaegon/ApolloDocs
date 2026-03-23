@@ -150,6 +150,7 @@ describe("useGenerateDoc", () => {
       procuracao: "/api/docs/procuracao",
       unifilar: "/api/docs/unifilar",
       formulario: "/api/docs/formulario",
+      todos: "/api/docs/todos",
     };
 
     for (const [docType, expectedEndpoint] of Object.entries(endpoints)) {
@@ -159,7 +160,7 @@ describe("useGenerateDoc", () => {
       });
 
       const { result } = renderHook(
-        () => useGenerateDoc({ docType: docType as "memorial" | "procuracao" | "unifilar" | "formulario" }),
+        () => useGenerateDoc({ docType: docType as "memorial" | "procuracao" | "unifilar" | "formulario" | "todos" }),
         { wrapper: makeWrapper() }
       );
 

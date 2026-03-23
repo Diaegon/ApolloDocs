@@ -20,6 +20,7 @@ const DOC_ENDPOINTS: Record<DocType, string> = {
   procuracao: "/api/docs/procuracao",
   unifilar: "/api/docs/unifilar",
   formulario: "/api/docs/formulario",
+  todos: "/api/docs/todos",
 };
 
 const DOC_FILENAMES: Record<DocType, string> = {
@@ -27,6 +28,7 @@ const DOC_FILENAMES: Record<DocType, string> = {
   procuracao: "procuracao.pdf",
   unifilar: "diagrama_unifilar.pdf",
   formulario: "formulario_enel_ce.pdf",
+  todos: "documentos.zip",
 };
 
 export function useGenerateDoc({ docType, filename }: UseGenerateDocOptions) {

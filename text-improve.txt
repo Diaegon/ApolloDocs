@@ -42,3 +42,11 @@ poetry run task migrate-dev
 
 # Stop the container
 poetry run task db-down
+
+
+
+TASKS:
+
+-identificar no frontend as unidades de entrada
+-NORMALIZAR DADOS DE ENTRADA DO BACKEND (DEIXAR TUDO NA MESMA UNIDADE EX: W -> kW)
+-autenticar token automaticamente

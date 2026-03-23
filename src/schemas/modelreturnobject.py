@@ -117,7 +117,7 @@ class ConfiguracaoSistema:
 
 @dataclass
 class ProjetoCompleto:
-    id_projeto: int
+    
 
     numero_unidade_consumidora: str
     carga_instalada_kw: float
@@ -133,7 +133,6 @@ class ProjetoCompleto:
     endereco_obra: EnderecoObra
 
     sistema_instalado: list
-
     # quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
 
 
