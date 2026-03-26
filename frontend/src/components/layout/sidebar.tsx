@@ -9,6 +9,7 @@ import {
   Zap,
   ClipboardList,
   LayoutDashboard,
+  Files,
 } from "lucide-react";
 
 const navItems = [
@@ -36,6 +37,11 @@ const navItems = [
     href: "/dashboard/formulario",
     label: "Formulário ENEL-CE",
     icon: ClipboardList,
+  },
+  {
+    href: "/dashboard/todos",
+    label: "Todos os Documentos",
+    icon: Files,
   },
 ];
 

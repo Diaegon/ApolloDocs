@@ -156,9 +156,33 @@ export interface ProjetoFormularioEnelCe {
   telefone_procurador: string;
 }
 
+export interface ProjetoTodos {
+  id_projeto: number | null;
+  nome_projetista: string;
+  cft_crea_projetista: string;
+  cliente: Cliente;
+  endereco_cliente: EnderecoCliente;
+  endereco_obra: EnderecoObra;
+  procurador: Procurador;
+  numero_unidade_consumidora: string;
+  carga_instalada_kw: number;
+  disjuntor_geral_amperes: number;
+  energia_media_mensal_kwh: number;
+  classe_consumo: ClasseConsumo;
+  tipo_fornecimento: TipoFornecimento;
+  ramal_energia: RamalEnergia;
+  tensao_local: number;
+  potencia_geracao: number;
+  data_projeto: string;
+  quantidade_sistemas_instalados: QuantidadeSistemas;
+  sistema_instalado1: ConfiguracaoSistema;
+  sistema_instalado2?: ConfiguracaoSistema;
+  sistema_instalado3?: ConfiguracaoSistema;
+}
+
 // ─── API response ────────────────────────────────────────────────────────────
 
-export type DocType = "memorial" | "procuracao" | "unifilar" | "formulario";
+export type DocType = "memorial" | "procuracao" | "unifilar" | "formulario" | "todos";
 
 export interface GenerateDocResult {
   pdfUrl: string;
