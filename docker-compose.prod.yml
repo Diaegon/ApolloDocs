@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: apollodocs_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-apollodocs_prod_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-securepassword123!}
+      POSTGRES_DB: ${POSTGRES_DB:-apollodocs_prod}
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-apollodocs_prod_user} -d $${POSTGRES_DB:-apollodocs_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apollodocs_api_prod
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER:-apollodocs_prod_user}:${POSTGRES_PASSWORD:-securepassword123!}@db:5432/${POSTGRES_DB:-apollodocs_prod}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: apollodocs_frontend_prod
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
+      - BACKEND_URL=${BACKEND_URL:-http://api:8000}
+    depends_on:
+      - api
+
+  nginx:
+    image: nginx:alpine
+    container_name: apollodocs_nginx_prod
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - frontend
+
+volumes:
+  pgdata_prod:
