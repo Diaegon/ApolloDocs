@@ -10,7 +10,7 @@ app = FastAPI(title="ApolloDocs API", version="1.0.0")
 
 origins = [
     "http://localhost:3000",
-    "http://0.0.0.0:3000",
+    "https://apollodocs.diegocanafs.com.br",
 ]
 
 app.add_middleware(
