@@ -8,10 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 IMAGE_PATH = "apollodocs_image.png"
 app = FastAPI(title="ApolloDocs API", version="1.0.0")
 
-origins = [
-    "http://localhost:3000",
-    "https://apollodocs.diegocanafs.com.br",
-]
+origins = os.getenv("CORS_ORIGINS", "").split(",")
 
 app.add_middleware(
     CORSMiddleware,

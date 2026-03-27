@@ -1,12 +1,16 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: apollodocs_db_prod
+    container_name: apollodb
     restart: always
-    env_file:
-      - .env
+    enviroment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - pgdata_prod:/var/lib/postgresql/data
+    networks:
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
@@ -16,11 +20,17 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: apollodocs_api_prod
+      dockerfile: api/Dockerfile
+    container_name: apolloapi
     restart: always
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      SECRET_KEY=${SECRET_KEY}
+      ALGORITHM=${ALGORITHM}
+      ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+    networks:
+      - internal
+      - web
     depends_on:
       db:
         condition: service_healthy
@@ -29,24 +39,34 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: apollodocs_frontend_prod
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    container_name: apollofront
     restart: always
-    env_file:
-      - .env
+    networks:
+      - web
     depends_on:
       - api
 
   nginx:
     image: nginx:alpine
-    container_name: apollodocs_nginx_prod
+    container_name: apollonginx
     restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - web
     depends_on:
       - api
       - frontend
+
+networks:
+  internal:
+  web:
 
 volumes:
   pgdata_prod:
