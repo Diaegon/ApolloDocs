@@ -33,8 +33,9 @@ services:
       - ALGORITHM=${ALGORITHM}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
     volumes:
-      - ./api:/app
+      - ./api:/app/api
       - ./src:/app/src
+      - ./support-files:/app/support-files
     depends_on:
       db:
         condition: service_healthy
@@ -54,7 +55,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - BACKEND_URL=${BACKEND_URL}
+      - BACKEND_URL=http://api:8000
     depends_on:
       - api
 

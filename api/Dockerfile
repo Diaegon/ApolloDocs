@@ -21,9 +21,13 @@ RUN poetry config virtualenvs.create false
 # Install dependencies
 RUN poetry install --no-root --no-interaction --no-ansi --without dev
 
-# Copy the application code
-COPY . .
+COPY alembic.ini ./
+COPY migrations ./migrations
 
+# Copy the application code
+COPY api ./api
+COPY src ./src
+COPY support-files ./support-files
 # Expose port
 EXPOSE 8000
 

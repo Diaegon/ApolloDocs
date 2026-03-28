@@ -11,5 +11,4 @@ class ProjetoProcuracao(BaseModel):
 
     cliente: Cliente
     endereco_cliente: EnderecoCliente
-    endereco_obra: EnderecoObra
     procurador: Procurador

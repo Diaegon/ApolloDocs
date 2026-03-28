@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { clienteSchema, enderecoObraSchema } from "./memorial";
+import { clienteSchema } from "./memorial";
 
 export const enderecoClienteSchema = z.object({
   logradouro_cliente: z.string().min(1, "Logradouro é obrigatório"),
@@ -49,7 +49,6 @@ export const projetoProcuracaoSchema = z.object({
   id_projeto: z.number().optional(),
   cliente: clienteSchema,
   endereco_cliente: enderecoClienteSchema,
-  endereco_obra: enderecoObraSchema,
   procurador: procuradorSchema,
 });
 

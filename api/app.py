@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from api.routers import auth, clientes, docs, procuradores, projetistas, projetos, users
-
+import os
 from fastapi.middleware.cors import CORSMiddleware
 
 IMAGE_PATH = "apollodocs_image.png"

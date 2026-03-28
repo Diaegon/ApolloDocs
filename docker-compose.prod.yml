@@ -43,6 +43,8 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     container_name: apollofront
     restart: always
+    environment:
+      - BACKEND_URL=http://api:8000
     networks:
       - web
     depends_on:
