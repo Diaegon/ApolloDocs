@@ -24,10 +24,10 @@ services:
     container_name: apolloapi
     restart: always
     environment:
-      DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      SECRET_KEY=${SECRET_KEY}
-      ALGORITHM=${ALGORITHM}
-      ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+     - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+     - SECRET_KEY=${SECRET_KEY}
+     - ALGORITHM=${ALGORITHM}
+     - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
     networks:
       - internal
       - web
