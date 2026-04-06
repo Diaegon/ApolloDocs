@@ -289,7 +289,7 @@ export function UnifilarForm() {
                   </FormField>
 
                   <FormField
-                    label="Potência (W)"
+                    label="Potência (kW)"
                     htmlFor={`${prefix}.inversor.potencia_inversor`}
                     error={sysErrors?.inversor?.potencia_inversor?.message}
                     required
@@ -298,7 +298,7 @@ export function UnifilarForm() {
                       id={`${prefix}.inversor.potencia_inversor`}
                       type="number"
                       step="0.01"
-                      placeholder="6000"
+                      placeholder="6"
                       error={sysErrors?.inversor?.potencia_inversor?.message}
                       {...register(`${prefix}.inversor.potencia_inversor`, {
                         valueAsNumber: true,

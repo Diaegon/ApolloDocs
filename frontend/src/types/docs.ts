@@ -120,7 +120,6 @@ export interface ProjetoProcuracao {
   id_projeto: number | null; // int | None, no default → required by Pydantic v2
   cliente: Cliente;
   endereco_cliente: EnderecoCliente;
-  endereco_obra: EnderecoObra;
   procurador: Procurador;
 }
 
