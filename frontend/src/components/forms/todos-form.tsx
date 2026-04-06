@@ -218,7 +218,7 @@ export function TodosForm() {
         inversor: {
           marca_inversor: "Growatt",
           modelo_inversor: "MIN 6000TL-X",
-          potencia_inversor: 6000,
+          potencia_inversor: 6,
           numero_fases: "monofasico",
           tipo_de_inversor: "string",
         },
