@@ -90,7 +90,7 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-gray-200 p-4 text-xs text-gray-400">
-        Solar ENEL-CE — Ceará, Brasil
+        ApolloDocs Fortaleza — Ceará, Brasil
       </div>
     </aside>
   );
