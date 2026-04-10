@@ -28,6 +28,8 @@ services:
      - SECRET_KEY=${SECRET_KEY}
      - ALGORITHM=${ALGORITHM}
      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+    volumes:
+      - ./INMETRO_INVERSORES:/app/INMETRO_INVERSORES:ro
     networks:
       - internal
       - web

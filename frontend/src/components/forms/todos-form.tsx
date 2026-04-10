@@ -74,7 +74,7 @@ function SistemaSection({
           <FormField label="Modelo" htmlFor={`${prefix}.inversor.modelo_inversor`} error={sysErrors?.inversor?.modelo_inversor?.message} required>
             <Input id={`${prefix}.inversor.modelo_inversor`} placeholder="Ex: MIN 6000TL-X" {...register(`${prefix}.inversor.modelo_inversor`)} />
           </FormField>
-          <FormField label="Potência (W)" htmlFor={`${prefix}.inversor.potencia_inversor`} error={sysErrors?.inversor?.potencia_inversor?.message} required>
+          <FormField label="Potência (kW)" htmlFor={`${prefix}.inversor.potencia_inversor`} error={sysErrors?.inversor?.potencia_inversor?.message} required>
             <Input type="number" step="0.01" {...register(`${prefix}.inversor.potencia_inversor`, { valueAsNumber: true })} />
           </FormField>
           <FormField label="Número de Fases" htmlFor={`${prefix}.inversor.numero_fases`} error={sysErrors?.inversor?.numero_fases?.message} required>
@@ -290,7 +290,7 @@ export function TodosForm() {
             <FormField label="Ramal de Energia" htmlFor="ramal_energia" error={errors.ramal_energia?.message} required>
               <Select options={RAMAL_OPTIONS} {...register("ramal_energia")} />
             </FormField>
-            
+
             <div className="col-span-1 sm:col-span-3">
               <FormField label="Quantidade de Sistemas" htmlFor="quantidade_sistemas_instalados" error={errors.quantidade_sistemas_instalados?.message} required>
                 <Select className="w-40" options={QUANTIDADE_SISTEMAS_OPTIONS} {...register("quantidade_sistemas_instalados", { valueAsNumber: true })} />
@@ -347,7 +347,7 @@ export function TodosForm() {
             </FormField>
           </div>
         </fieldset>
-        
+
         {/* Endereço da Obra */}
         <fieldset className="form-section space-y-4">
           <legend>Endereço da Obra</legend>

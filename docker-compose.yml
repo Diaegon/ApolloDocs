@@ -36,6 +36,7 @@ services:
       - ./api:/app/api
       - ./src:/app/src
       - ./support-files:/app/support-files
+      - ./INMETRO_INVERSORES:/app/INMETRO_INVERSORES:ro
     depends_on:
       db:
         condition: service_healthy

@@ -48,7 +48,18 @@ const documents = [
     bg: "bg-primary-50",
     border: "border-primary-100",
   },
+  {
+    href: "/dashboard/inversores",
+    title: "Certificados Inversores",
+    description:
+      "Acesse a biblioteca de inversores para consultar e baixar certificados INMETRO de diversas marcas.",
+    icon: FileText,
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+    border: "border-purple-100",
+  },
 ];
+
 
 export default function DashboardPage() {
   return (
