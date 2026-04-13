@@ -20,9 +20,21 @@ import type {
 
 type SistemaFormData = ProjetoMemorialFormData["sistema_instalado1"];
 
+type NormalizedSistema = Omit<SistemaFormData, "inversor" | "placa" | "placa2"> & {
+  inversor: Omit<SistemaFormData["inversor"], "id_inversor"> & { id_inversor: number | null };
+  placa: Omit<SistemaFormData["placa"], "id_placa" | "eficiencia_placa"> & {
+    id_placa: number | null;
+    eficiencia_placa: number | null;
+  };
+  placa2?: Omit<NonNullable<SistemaFormData["placa2"]>, "id_placa" | "eficiencia_placa"> & {
+    id_placa: number | null;
+    eficiencia_placa: number | null;
+  };
+};
+
 /** Ensures id_inversor, id_placa and eficiencia_placa are null (not undefined). */
-function normalizeSistema(s: SistemaFormData) {
-  const result: any = {
+function normalizeSistema(s: SistemaFormData): NormalizedSistema {
+  return {
     ...s,
     inversor: {
       ...s.inversor,
@@ -33,17 +45,14 @@ function normalizeSistema(s: SistemaFormData) {
       id_placa: s.placa.id_placa ?? null,
       eficiencia_placa: s.placa.eficiencia_placa ?? null,
     },
-  };
-
-  if (s.placa2) {
-    result.placa2 = {
-      ...s.placa2,
-      id_placa: s.placa2.id_placa ?? null,
-      eficiencia_placa: s.placa2.eficiencia_placa ?? null,
-    };
-  }
-
-  return result as any;
+    placa2: s.placa2
+      ? {
+          ...s.placa2,
+          id_placa: s.placa2.id_placa ?? null,
+          eficiencia_placa: s.placa2.eficiencia_placa ?? null,
+        }
+      : undefined,
+  } as NormalizedSistema;
 }
 
 export function normalizeMemorialPayload(

@@ -194,7 +194,6 @@ const procuracaoFormData: ProjetoProcuracaoFormData = {
     cidade_cliente: "Fortaleza",
     estado_cliente: "CE",
   },
-  endereco_obra: enderecoObraForm,
   procurador: {
     nome_procurador: "Maria Souza",
     cpf_procurador: "987.654.321-00",
@@ -237,10 +236,10 @@ describe("normalizeProcuracaoPayload — value preservation", () => {
     expect(payload.procurador.cpf_procurador).toBe("987.654.321-00");
   });
 
-  it("preserves endereco_obra", () => {
+  it("preserves endereco_cliente", () => {
     const payload = normalizeProcuracaoPayload(procuracaoFormData);
-    expect(payload.endereco_obra.logradouro_obra).toBe("Rua das Flores");
-    expect(payload.endereco_obra.cidade_obra).toBe("Fortaleza");
+    expect(payload.endereco_cliente.logradouro_cliente).toBe("Rua das Flores");
+    expect(payload.endereco_cliente.cidade_cliente).toBe("Fortaleza");
   });
 });
 

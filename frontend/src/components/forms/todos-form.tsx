@@ -13,131 +13,13 @@ import { FormField } from "@/components/ui/form-field";
 import { useGenerateDoc } from "@/hooks/use-generate-doc";
 import { normalizeTodosPayload } from "@/lib/payload/normalize";
 import { FileArchive, Sparkles } from "lucide-react";
-
-// Options reusing those from memorial
-const FASES_OPTIONS = [
-  { value: "monofasico", label: "Monofásico" },
-  { value: "bifasico", label: "Bifásico" },
-  { value: "trifasico", label: "Trifásico" },
-];
-
-const TIPO_INVERSOR_OPTIONS = [
-  { value: "string", label: "String" },
-  { value: "micro", label: "Micro-inversor" },
-];
-
-const CLASSE_CONSUMO_OPTIONS = [
-  { value: "residencial", label: "Residencial" },
-  { value: "comercial", label: "Comercial" },
-  { value: "industrial", label: "Industrial" },
-  { value: "rural", label: "Rural" },
-];
-
-const RAMAL_OPTIONS = [
-  { value: "aereo", label: "Aéreo" },
-  { value: "subterraneo", label: "Subterrâneo" },
-];
-
-const QUANTIDADE_SISTEMAS_OPTIONS = [
-  { value: "1", label: "1 sistema" },
-  { value: "2", label: "2 sistemas" },
-  { value: "3", label: "3 sistemas" },
-];
-
-// Helper to render system section
-function SistemaSection({
-  index,
-  register,
-  errors,
-}: {
-  index: 1 | 2 | 3;
-  register: ReturnType<typeof useForm<ProjetoTodosFormData>>["register"];
-  errors: ReturnType<typeof useForm<ProjetoTodosFormData>>["formState"]["errors"];
-}) {
-  const prefix = `sistema_instalado${index}` as
-    | "sistema_instalado1"
-    | "sistema_instalado2"
-    | "sistema_instalado3";
-  const sysErrors = errors[prefix];
-
-  return (
-    <fieldset className="form-section space-y-6">
-      <legend>Sistema {index}</legend>
-
-      {/* Inversor */}
-      <div>
-        <h4 className="mb-3 text-sm font-semibold text-gray-700">Inversor</h4>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Marca" htmlFor={`${prefix}.inversor.marca_inversor`} error={sysErrors?.inversor?.marca_inversor?.message} required>
-            <Input id={`${prefix}.inversor.marca_inversor`} placeholder="Ex: Growatt" {...register(`${prefix}.inversor.marca_inversor`)} />
-          </FormField>
-          <FormField label="Modelo" htmlFor={`${prefix}.inversor.modelo_inversor`} error={sysErrors?.inversor?.modelo_inversor?.message} required>
-            <Input id={`${prefix}.inversor.modelo_inversor`} placeholder="Ex: MIN 6000TL-X" {...register(`${prefix}.inversor.modelo_inversor`)} />
-          </FormField>
-          <FormField label="Potência (kW)" htmlFor={`${prefix}.inversor.potencia_inversor`} error={sysErrors?.inversor?.potencia_inversor?.message} required>
-            <Input type="number" step="0.01" {...register(`${prefix}.inversor.potencia_inversor`, { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Número de Fases" htmlFor={`${prefix}.inversor.numero_fases`} error={sysErrors?.inversor?.numero_fases?.message} required>
-            <Select options={FASES_OPTIONS} {...register(`${prefix}.inversor.numero_fases`)} />
-          </FormField>
-          <FormField label="Tipo de Inversor" htmlFor={`${prefix}.inversor.tipo_de_inversor`} error={sysErrors?.inversor?.tipo_de_inversor?.message} required>
-            <Select options={TIPO_INVERSOR_OPTIONS} {...register(`${prefix}.inversor.tipo_de_inversor`)} />
-          </FormField>
-          <FormField label="Número de MPPTs" htmlFor={`${prefix}.inversor.numero_mppt`} error={sysErrors?.inversor?.numero_mppt?.message}>
-            <Input type="number" {...register(`${prefix}.inversor.numero_mppt`, { valueAsNumber: true })} />
-          </FormField>
-        </div>
-      </div>
-
-      <FormField label="Quantidade de Inversores" htmlFor={`${prefix}.quantidade_inversor`} error={sysErrors?.quantidade_inversor?.message} required>
-        <Input type="number" className="w-40" {...register(`${prefix}.quantidade_inversor`, { valueAsNumber: true })} />
-      </FormField>
-
-      {/* Placa */}
-      <div>
-        <h4 className="mb-3 text-sm font-semibold text-gray-700">Módulo Fotovoltaico</h4>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField label="Marca" htmlFor={`${prefix}.placa.marca_placa`} error={sysErrors?.placa?.marca_placa?.message} required>
-            <Input {...register(`${prefix}.placa.marca_placa`)} />
-          </FormField>
-          <FormField label="Modelo" htmlFor={`${prefix}.placa.modelo_placa`} error={sysErrors?.placa?.modelo_placa?.message} required>
-            <Input {...register(`${prefix}.placa.modelo_placa`)} />
-          </FormField>
-          <FormField label="Potência (Wp)" htmlFor={`${prefix}.placa.potencia_placa`} error={sysErrors?.placa?.potencia_placa?.message} required>
-            <Input type="number" step="0.01" {...register(`${prefix}.placa.potencia_placa`, { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Tipo de Célula" htmlFor={`${prefix}.placa.tipo_celula`} error={sysErrors?.placa?.tipo_celula?.message} required>
-            <Input {...register(`${prefix}.placa.tipo_celula`)} />
-          </FormField>
-          <FormField label="Tensão de Pico Voc (V)" htmlFor={`${prefix}.placa.tensao_pico`} error={sysErrors?.placa?.tensao_pico?.message} required>
-            <Input type="number" step="0.01" {...register(`${prefix}.placa.tensao_pico`, { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Corrente de Curto-circuito Isc (A)" htmlFor={`${prefix}.placa.corrente_curtocircuito`} error={sysErrors?.placa?.corrente_curtocircuito?.message} required>
-            <Input type="number" step="0.01" {...register(`${prefix}.placa.corrente_curtocircuito`, { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Tensão Máx. Potência Vmpp (V)" htmlFor={`${prefix}.placa.tensao_maxima_potencia`} error={sysErrors?.placa?.tensao_maxima_potencia?.message} required>
-            <Input type="number" step="0.01" {...register(`${prefix}.placa.tensao_maxima_potencia`, { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Corrente Máx. Potência Impp (A)" htmlFor={`${prefix}.placa.corrente_maxima_potencia`} error={sysErrors?.placa?.corrente_maxima_potencia?.message} required>
-            <Input type="number" step="0.01" {...register(`${prefix}.placa.corrente_maxima_potencia`, { valueAsNumber: true })} />
-          </FormField>
-          <FormField label="Eficiência (%)" htmlFor={`${prefix}.placa.eficiencia_placa`} error={sysErrors?.placa?.eficiencia_placa?.message}>
-            <Input type="number" step="0.01" {...register(`${prefix}.placa.eficiencia_placa`, { valueAsNumber: true })} />
-          </FormField>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <FormField label="Quantidade de Placas (string 1)" htmlFor={`${prefix}.quantidade_total_placas_do_sistema.quantidade_placas`} error={sysErrors?.quantidade_total_placas_do_sistema?.quantidade_placas?.message} required>
-          <Input type="number" {...register(`${prefix}.quantidade_total_placas_do_sistema.quantidade_placas`, { valueAsNumber: true })} />
-        </FormField>
-        <FormField label="Quantidade de Placas (string 2)" htmlFor={`${prefix}.quantidade_total_placas_do_sistema.quantidade_placas2`} error={sysErrors?.quantidade_total_placas_do_sistema?.quantidade_placas2?.message}>
-          <Input type="number" {...register(`${prefix}.quantidade_total_placas_do_sistema.quantidade_placas2`, { valueAsNumber: true })} />
-        </FormField>
-      </div>
-    </fieldset>
-  );
-}
+import { SistemaSection } from "@/components/forms/shared/sistema-section";
+import {
+  FASES_OPTIONS,
+  CLASSE_CONSUMO_OPTIONS,
+  RAMAL_OPTIONS,
+  QUANTIDADE_SISTEMAS_OPTIONS,
+} from "@/components/forms/shared/form-options";
 
 export function TodosForm() {
   const { generate, pdfUrl, filename, isLoading, error, reset } =
@@ -282,18 +164,18 @@ export function TodosForm() {
               <Input type="number" {...register("potencia_geracao", { valueAsNumber: true })} />
             </FormField>
             <FormField label="Classe de Consumo" htmlFor="classe_consumo" error={errors.classe_consumo?.message} required>
-              <Select options={CLASSE_CONSUMO_OPTIONS} {...register("classe_consumo")} />
+              <Select options={[...CLASSE_CONSUMO_OPTIONS]} {...register("classe_consumo")} />
             </FormField>
             <FormField label="Tipo de Fornecimento" htmlFor="tipo_fornecimento" error={errors.tipo_fornecimento?.message} required>
-              <Select options={FASES_OPTIONS} {...register("tipo_fornecimento")} />
+              <Select options={[...FASES_OPTIONS]} {...register("tipo_fornecimento")} />
             </FormField>
             <FormField label="Ramal de Energia" htmlFor="ramal_energia" error={errors.ramal_energia?.message} required>
-              <Select options={RAMAL_OPTIONS} {...register("ramal_energia")} />
+              <Select options={[...RAMAL_OPTIONS]} {...register("ramal_energia")} />
             </FormField>
 
             <div className="col-span-1 sm:col-span-3">
               <FormField label="Quantidade de Sistemas" htmlFor="quantidade_sistemas_instalados" error={errors.quantidade_sistemas_instalados?.message} required>
-                <Select className="w-40" options={QUANTIDADE_SISTEMAS_OPTIONS} {...register("quantidade_sistemas_instalados", { valueAsNumber: true })} />
+                <Select className="w-40" options={[...QUANTIDADE_SISTEMAS_OPTIONS]} {...register("quantidade_sistemas_instalados", { valueAsNumber: true })} />
               </FormField>
             </div>
           </div>

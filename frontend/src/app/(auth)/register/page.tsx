@@ -11,8 +11,6 @@ import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
 import { Card, CardContent } from "@/components/ui/card";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
-
 export default function RegisterPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -28,8 +26,7 @@ export default function RegisterPage() {
   async function onSubmit(data: RegisterFormData) {
     setServerError(null);
 
-    // Register directly to the backend (user creation doesn't require auth)
-    const response = await fetch(`${BACKEND_URL}/users/`, {
+    const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -54,14 +51,8 @@ export default function RegisterPage() {
         router.push("/login");
       }
     } else {
-      const body = await response.json().catch(() => ({})) as { detail?: string | { msg: string }[] };
-      if (typeof body.detail === "string") {
-        setServerError(body.detail);
-      } else if (Array.isArray(body.detail)) {
-        setServerError(body.detail.map((e) => e.msg).join(", "));
-      } else {
-        setServerError("Erro ao criar conta. Tente novamente.");
-      }
+      const body = await response.json().catch(() => ({})) as { error?: string };
+      setServerError(body.error ?? "Erro ao criar conta. Tente novamente.");
     }
   }
 

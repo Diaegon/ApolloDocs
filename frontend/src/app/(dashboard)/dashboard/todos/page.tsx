@@ -3,7 +3,7 @@ import { Header } from "@/components/layout/header";
 import { TodosForm } from "@/components/forms/todos-form";
 
 export const metadata: Metadata = {
-  title: "Todos os Documentos | ApolloDocs",
+  title: "Todos os Documentos",
   description: "Gerar todos os documentos do projeto solar (ZIP).",
 };
 

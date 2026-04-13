@@ -14,9 +14,9 @@ const documents = [
     description:
       "Gere o memorial descritivo técnico do sistema fotovoltaico com cálculos de dimensionamento.",
     icon: FileText,
-    color: "text-blue-600",
-    bg: "bg-blue-50",
-    border: "border-blue-100",
+    color: "text-doc-memorial-icon",
+    bg: "bg-doc-memorial-bg",
+    border: "border-doc-memorial-border",
   },
   {
     href: "/dashboard/procuracao",
@@ -24,9 +24,9 @@ const documents = [
     description:
       "Gere a procuração para o representante do cliente junto à ENEL-CE.",
     icon: ScrollText,
-    color: "text-green-600",
-    bg: "bg-green-50",
-    border: "border-green-100",
+    color: "text-doc-procuracao-icon",
+    bg: "bg-doc-procuracao-bg",
+    border: "border-doc-procuracao-border",
   },
   {
     href: "/dashboard/unifilar",
@@ -34,9 +34,9 @@ const documents = [
     description:
       "Gere o diagrama unifilar elétrico do sistema de geração fotovoltaica.",
     icon: Zap,
-    color: "text-yellow-600",
-    bg: "bg-yellow-50",
-    border: "border-yellow-100",
+    color: "text-doc-unifilar-icon",
+    bg: "bg-doc-unifilar-bg",
+    border: "border-doc-unifilar-border",
   },
   {
     href: "/dashboard/formulario",
@@ -44,9 +44,9 @@ const documents = [
     description:
       "Preencha e gere o formulário oficial de solicitação de acesso micro/minigeração ENEL-CE.",
     icon: ClipboardList,
-    color: "text-primary-600",
-    bg: "bg-primary-50",
-    border: "border-primary-100",
+    color: "text-doc-formulario-icon",
+    bg: "bg-doc-formulario-bg",
+    border: "border-doc-formulario-border",
   },
   {
     href: "/dashboard/inversores",
@@ -54,9 +54,9 @@ const documents = [
     description:
       "Acesse a biblioteca de inversores para consultar e baixar certificados INMETRO de diversas marcas.",
     icon: FileText,
-    color: "text-purple-600",
-    bg: "bg-purple-50",
-    border: "border-purple-100",
+    color: "text-doc-inversores-icon",
+    bg: "bg-doc-inversores-bg",
+    border: "border-doc-inversores-border",
   },
 ];
 
