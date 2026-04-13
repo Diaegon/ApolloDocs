@@ -2,7 +2,7 @@
 
 Sistema SaaS para automação de documentação técnica em projetos de energia solar fotovoltaica, focado na área de concessão da **ENEL-CE (Ceará, Brasil)**.
 
-O usuário preenche os dados do projeto uma única vez e o sistema gera automaticamente todos os documentos necessários para homologação na distribuidora.
+O usuário cadastra seus dados (clientes, procuradores, projetistas, equipamentos) uma única vez e o sistema gera automaticamente todos os documentos necessários para homologação na distribuidora.
 
 ---
 
@@ -26,26 +26,33 @@ HTTP Request
     ▼
 FastAPI Router (api/routers/)
     │
-    ▼
-Service Layer (api/services/)
-    │   DocsService          → geração individual
-    │   AllDocsService       → gera todos e retorna ZIP
-    ▼
-ProjectFactory (src/createproject.py)
-    │   converte Pydantic schemas → objetos de domínio
-    ▼
-Domain Layer (src/domain/)
-    │   creatememorialobject.py  → cálculos elétricos (memorial)
-    │   creatediagramobject.py   → cálculos para diagrama unifilar
-    │   texts/                   → geração de textos técnicos
-    ▼
-PDF Builders (src/buildingdocuments/)
-    │   memorialdescritivo.py    → WeasyPrint
-    │   procuracao.py            → WeasyPrint
-    │   unifilar.py              → PyMuPDF
-    │   formularioENEL.py        → PyMuPDF
-    ▼
-StreamingResponse (PDF) ou ZIP
+    ├── CRUD Routers ──────────────────────────────────────────────────┐
+    │   clientes / projetos / procuradores / projetistas               │
+    │                                                                  ▼
+    │                                                       SQLAlchemy ORM → PostgreSQL
+    │
+    └── Docs Routers
+            │
+            ▼
+        Service Layer (api/services/)
+            │   DocsService          → geração individual
+            │   AllDocsService       → gera todos e retorna ZIP
+            ▼
+        ProjectFactory (src/createproject.py)
+            │   converte Pydantic schemas → objetos de domínio
+            ▼
+        Domain Layer (src/domain/)
+            │   creatememorialobject.py  → cálculos elétricos (memorial)
+            │   creatediagramobject.py   → cálculos para diagrama unifilar
+            │   texts/                   → geração de textos técnicos
+            ▼
+        PDF Builders (src/buildingdocuments/)
+            │   memorialdescritivo.py    → WeasyPrint
+            │   procuracao.py            → WeasyPrint
+            │   unifilar.py              → PyMuPDF
+            │   formularioENEL.py        → PyMuPDF
+            ▼
+        StreamingResponse (PDF) ou ZIP
 ```
 
 ---
@@ -55,25 +62,36 @@ StreamingResponse (PDF) ou ZIP
 ```
 ApolloDocs/
 ├── api/                          # FastAPI backend
-│   ├── app.py                    # instância da aplicação
+│   ├── app.py                    # instância da aplicação + CORS + static files
 │   ├── database.py               # sessão SQLAlchemy
 │   ├── security.py               # JWT auth (PyJWT + Argon2)
 │   ├── settings.py               # variáveis de ambiente
 │   ├── routers/
 │   │   ├── auth.py               # POST /auth/token
 │   │   ├── users.py              # CRUD de usuários
-│   │   └── docs.py               # endpoints de geração de documentos
+│   │   ├── docs.py               # endpoints de geração de documentos
+│   │   ├── clientes.py           # CRUD /clientes + sub-endpoints de endereços
+│   │   ├── projetos.py           # CRUD /projetos (vincula cliente, procurador, etc.)
+│   │   ├── procuradores.py       # CRUD /procuradores
+│   │   ├── projetistas.py        # CRUD /projetistas
+│   │   └── inversores.py         # GET /inversores/list (PDFs INMETRO)
 │   ├── schemas/
+│   │   ├── models.py             # ORM models: User, Cliente, Inversor, Placa,
+│   │   │                         #   Procurador, Projetista, EnderecoCliente,
+│   │   │                         #   EnderecoObra, Projeto
 │   │   ├── projetos/
 │   │   │   ├── memorial.py       # ProjetoMemorial
 │   │   │   ├── procuracao.py     # ProjetoProcuracao
 │   │   │   ├── unifilar.py       # ProjetoUnifilar
 │   │   │   ├── formularioenelce.py  # ProjetoFormularioEnelCe
-│   │   │   └── completo.py       # ProjetoTodos (payload unificado)
-│   │   ├── cliente/              # Cliente, EnderecoObra, EnderecoCliente
-│   │   ├── pessoas/              # Procurador, Projetista
-│   │   ├── sistema/              # ConfiguracaoSistema, Inversor, Placa
-│   │   └── common/enums.py       # classe_consumo, tensao_fase, ramal_de_energia
+│   │   │   ├── completo.py       # ProjetoTodos (payload unificado)
+│   │   │   └── projeto.py        # ProjetoSchema (CRUD)
+│   │   ├── cliente/              # ClienteSchema, EnderecoClienteSchema, EnderecoObraSchema
+│   │   ├── pessoas/              # ProcuradorSchema, ProjetistaSchema
+│   │   ├── sistema/              # ConfiguracaoSistema, InversorSchema, PlacaSchema
+│   │   ├── common/enums.py       # classe_consumo, tensao_fase, tipo_inversor, ramal_de_energia
+│   │   ├── pageschema.py         # FilterPage (paginação)
+│   │   └── user.py               # UserSchema, Message
 │   ├── services/
 │   │   ├── docs_service.py       # DocsService (geração individual)
 │   │   └── all_docs_service.py   # AllDocsService (gera todos → ZIP)
@@ -115,9 +133,17 @@ ApolloDocs/
 │       │   ├── api/auth/          # proxy de login/logout (define cookie httpOnly)
 │       │   ├── api/docs/          # proxy de PDFs (lê cookie, repassa ao FastAPI)
 │       │   ├── (auth)/            # páginas de login e registro
-│       │   └── (dashboard)/       # páginas do sistema (memorial, procuracao, etc.)
+│       │   └── (dashboard)/dashboard/
+│       │       ├── page.tsx       # overview com cards dos documentos
+│       │       ├── memorial/
+│       │       ├── procuracao/
+│       │       ├── unifilar/
+│       │       ├── formulario/
+│       │       ├── todos/
+│       │       └── inversores/    # listagem de inversores INMETRO
 │       ├── components/
-│       │   ├── forms/             # memorial-form, procuracao-form, unifilar-form, formulario-form
+│       │   ├── forms/             # memorial-form, procuracao-form, unifilar-form,
+│       │   │                      #   formulario-form, todos-form
 │       │   ├── layout/            # header, sidebar
 │       │   ├── pdf-viewer.tsx
 │       │   └── ui/                # button, card, input, select, label, form-field
@@ -127,11 +153,16 @@ ApolloDocs/
 │       │   ├── payload/normalize.ts  # normalização de payloads (undefined → null)
 │       │   └── validations/       # schemas Zod por formulário
 │       ├── types/auth.ts, docs.ts
-│       └── __tests__/             # Vitest + RTL (validações, forms, hooks, componentes)
+│       └── __tests__/             # Vitest + RTL
 │
+├── INMETRO_INVERSORES/            # PDFs de certificação INMETRO dos inversores
+│   └── {marca}/{modelo}/*.pdf     # organizados por marca e modelo (não versionado)
 ├── support-files/                 # templates PDF para PyMuPDF (não versionado)
+├── nginx/
+│   ├── nginx.conf                 # configuração do reverse proxy
+│   └── ssl/                       # certificados SSL (não versionados)
 ├── migrations/                    # Alembic migrations
-├── docker-compose.yml             # PostgreSQL 16
+├── docker-compose.yml             # stack completa: db + api + frontend + nginx
 ├── pyproject.toml                 # Poetry + taskipy
 └── .env.dev                       # variáveis de ambiente (desenvolvimento)
 ```
@@ -151,7 +182,7 @@ ApolloDocs/
 
 - **Python 3.12+** com [Poetry](https://python-poetry.org/docs/#installation)
 - **Node.js 20+** com npm
-- **Docker** (para PostgreSQL)
+- **Docker** (para PostgreSQL e deploy completo)
 
 ---
 
@@ -174,7 +205,9 @@ task migrate-dev
 # https://drive.google.com/drive/folders/1wS_3gRbTehiSYByUsZgDKmRfIrHZ1TSS
 # e coloque na raiz do projeto.
 
-# 5. Iniciar o servidor de desenvolvimento
+# 5. (Opcional) Adicionar PDFs INMETRO dos inversores em INMETRO_INVERSORES/
+
+# 6. Iniciar o servidor de desenvolvimento
 task dev
 ```
 
@@ -182,6 +215,7 @@ task dev
 
 ```bash
 cd frontend
+cp .env.local.example .env.local   # definir BACKEND_URL=http://localhost:8000
 npm install
 npm run dev
 ```
@@ -235,6 +269,26 @@ npm run lint      # ESLint
 | POST | `/docs/formularioenel` | PDF | `ProjetoFormularioEnelCe` |
 | POST | `/docs/todos` | ZIP (4 PDFs) | `ProjetoTodos` |
 
+### CRUD (requer Bearer token — todos os recursos são user-scoped)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET/POST | `/clientes/` | Listar / criar clientes |
+| GET/PUT/DELETE | `/clientes/{id}` | Ler / atualizar / excluir cliente |
+| POST | `/clientes/{id}/enderecos_cliente` | Adicionar endereço do cliente |
+| POST | `/clientes/{id}/enderecos_obra` | Adicionar endereço da obra |
+| GET/POST | `/projetos/` | Listar / criar projetos |
+| GET/PUT/DELETE | `/projetos/{id}` | Ler / atualizar / excluir projeto |
+| GET/POST | `/procuradores/` | Listar / criar procuradores |
+| GET/PUT/DELETE | `/procuradores/{id}` | Ler / atualizar / excluir procurador |
+| GET/POST | `/projetistas/` | Listar / criar projetistas |
+| GET/PUT/DELETE | `/projetistas/{id}` | Ler / atualizar / excluir projetista |
+
+### Inversores INMETRO (requer Bearer token)
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/inversores/list` | Árvore JSON: marcas → modelos → PDFs |
+| GET | `/inversores/{marca}/{modelo}/{arquivo}.pdf` | Download do PDF INMETRO |
+
 O endpoint `/docs/todos` recebe um único payload unificado (`ProjetoTodos`) e retorna um arquivo `.zip` com os quatro documentos:
 - `memorial_descritivo.pdf`
 - `procuracao.pdf`
@@ -249,11 +303,46 @@ O endpoint `/docs/todos` recebe um único payload unificado (`ProjetoTodos`) e r
 - **SQLAlchemy 2.0** ORM com migrações via Alembic (`migrations/`)
 - Testes usam **SQLite in-memory** via fixtures em `api/tests/conftest.py`
 
+### Modelos ORM
+
+| Modelo | Tabela | Observações |
+|--------|--------|-------------|
+| `User` | `users` | dono de todos os outros recursos |
+| `Cliente` | `clientes` | possui endereços (1-N) |
+| `EnderecoCliente` | `enderecocliente` | endereço pessoal do cliente |
+| `EnderecoObra` | `enderecoobra` | endereço da instalação; suporta lat/lon |
+| `Procurador` | `procuradores` | dados do procurador legal |
+| `Projetista` | `projetistas` | engenheiro responsável |
+| `Inversor` | `inversores` | equipamento global (sem user_id) |
+| `Placa` | `placas` | equipamento global (sem user_id) |
+| `Projeto` | `projetos` | vincula cliente + procurador + até 3 inversores + 3 placas |
+
+---
+
+## Deploy (Docker Compose)
+
+```bash
+# Copiar e preencher variáveis de ambiente
+cp .env.example .env
+
+# Subir stack completa (db + api + frontend + nginx)
+docker compose up -d
+```
+
+Serviços:
+- **db**: PostgreSQL 16 (rede interna; não exposto publicamente)
+- **api**: FastAPI (rede interna + web)
+- **frontend**: Next.js 15 (rede web)
+- **nginx**: Reverse proxy na porta 80/443 com SSL (`nginx/ssl/`)
+
+CORS configurado via variável `CORS_ORIGINS` (separado por vírgulas).
+
 ---
 
 ## Observações Técnicas
 
 - Os templates para PyMuPDF (`support-files/`) não são versionados — baixe separadamente pelo link acima
-- `support-files/` deve ficar na raiz do projeto
+- `INMETRO_INVERSORES/` deve ficar na raiz do projeto; montado como read-only no container (`/app/INMETRO_INVERSORES`)
 - Constantes de engenharia específicas do Ceará (HSP, resistividade do cobre, etc.) estão em `src/config.py`
 - Ruff: comprimento de linha 79; regras I, F, E, W, PL, PT, FAST; `migrations/` e `formularioENEL.py` excluídos do lint
+- Todos os recursos CRUD são filtrados por `user_id` — um usuário nunca vê dados de outro

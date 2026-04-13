@@ -43,7 +43,11 @@ Fix: use `await waitFor(() => expect(...isPending).toBe(true))`.
 - **Nginx Reverse Proxy**: Centralizes incoming traffic and routes requests securely. Removes direct public port exposure for the API and frontend services. Database access is restricted to the backend API via internal Docker networking.
 - **HTTPS Enforcement**: Best practices on Docker environment for production rely on HTTPS, with configurations optimized for a 443-only setup.
 
+## Upcoming Goal: Material Catalog Lookup
+- [Material Catalog Lookup Goal](project_catalog_goal.md) — auto-fill inversor/placa specs from DB catalog by ID, removing manual spec entry
+
 ## Recent Architectural Changes
 - **Docs Endpoints Refactored**: Document generation endpoints (`/docs`) no longer rely on `user_id` from headers, using the `current_user` auth token directly instead.
 - **Database Expansion**: Implemented and populated new models for `clientes`, `procuradores`, `projetistas`, and `inversores`.
 - **Testing Enhancements**: Extended frontend test coverage specifically for the document generation process ("Todos os Documentos" format).
+- **Domain Engine Upgrade (V2)**: Implemented structural decoupling for project generation inside `creatememorialobject_v2.py`. The new architecture isolates backend array mathematical algorithms cleanly from frontend UI text generation by mapping strings through a dedicated `MemorialPresenterV2` pipeline. The APIs inherently support decoupled dynamic arrays (`MaterialInversor`, `MaterialPlaca`), abandoning the legacy `ConfiguracaoSistema` mappings!
