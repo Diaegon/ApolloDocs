@@ -35,6 +35,22 @@ async def post_data_memorial(
     )
 
 
+from api.schemas.projetos.memorial_v2 import ProjetoMemorialV2
+@router.post("/v2/memorialdescritivo", status_code=201, response_model=None)
+async def post_data_memorial_v2(
+    dados_entrada: ProjetoMemorialV2,
+    current_user: CurrentUser,
+    session: Sessions,
+):
+    buffer = DocsService.generate_memorial_v2(dados_entrada, session)
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=memorial_v2.pdf"},
+    )
+
+
 @router.post("/procuracao", status_code=201, response_model=None)
 async def post_data_procuracao(
     projeto: ProjetoProcuracao,
@@ -46,6 +62,23 @@ async def post_data_procuracao(
         buffer,
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=procuracao.pdf"},
+    )
+
+
+from api.schemas.projetos.unifilar_v2 import ProjetoUnifilarV2
+@router.post("/v2/diagramaunifilar", status_code=201, response_model=None)
+async def post_data_diagrama_unifilar_v2(
+    dados_entrada: ProjetoUnifilarV2,
+    current_user: CurrentUser,
+    session: Sessions,
+):
+    buffer = DocsService.generate_diagrama_unifilar_v2(dados_entrada, session)
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=diagrama_unifilar_v2.pdf"
+        },
     )
 
 

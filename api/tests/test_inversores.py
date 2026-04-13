@@ -7,7 +7,7 @@ from unittest.mock import patch
 @patch("api.routers.inversores.os.path.isdir")
 @patch("api.routers.inversores.os.path.isfile")
 def test_list_inversores(mock_isfile, mock_isdir, mock_listdir, mock_exists, client, token):
-    """GET /api/inversores/list should return a tree of brands and models."""
+    """GET /inversores/list should return a tree of brands and models."""
     mock_exists.return_value = True
 
     def side_effect_listdir(path):
@@ -25,7 +25,7 @@ def test_list_inversores(mock_isfile, mock_isdir, mock_listdir, mock_exists, cli
     mock_isfile.side_effect = lambda p: p.endswith(".pdf") or p.endswith(".png")
 
     response = client.get(
-        "/api/inversores/list",
+        "/inversores/list",
         headers={"Authorization": f"Bearer {token}"},
     )
     
@@ -38,6 +38,14 @@ def test_list_inversores(mock_isfile, mock_isdir, mock_listdir, mock_exists, cli
     assert data[0]["models"][0]["files"] == ["document.pdf"] # Expect only .pdf files
 
 def test_list_inversores_unauthorized(client):
-    """GET /api/inversores/list should return 401 when no token is provided."""
-    response = client.get("/api/inversores/list")
+    """GET /inversores/list should return 401 when no token is provided."""
+    response = client.get("/inversores/list")
     assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+def test_inversor_v2_schema():
+    """Test that Inversor_v2 schema correctly stores brand, model and quantity."""
+    from api.schemas.sistema.inversor import Inversor_v2
+    inversor = Inversor_v2(marca_inversor="Fronius", modelo_inversor="Symo 5.0", quantidade=2)
+    assert inversor.marca_inversor == "Fronius"
+    assert inversor.modelo_inversor == "Symo 5.0"
+    assert inversor.quantidade == 2

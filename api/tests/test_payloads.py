@@ -216,6 +216,28 @@ COMPLETO_PAYLOAD = {
     "sistema_instalado3": None,
 }
 
+UNIFILAR_V2_BASE = {
+    "nome_projetista": "Maria Engenheira",
+    "cft_crea_projetista": "CREA-CE 123456",
+    "nome_cliente": "João da Silva",
+    "disjuntor_geral_amperes": 40.0,
+    "tensao_local": 220,
+    "endereco_obra": ENDERECO_OBRA,
+}
+
+MEMORIAL_V2_BASE = {
+    "cliente": CLIENTE,
+    "endereco_obra": ENDERECO_OBRA,
+    "numero_unidade_consumidora": "1234567890",
+    "carga_instalada_kw": 10.0,
+    "disjuntor_geral_amperes": 40.0,
+    "energia_media_mensal_kwh": 400.0,
+    "classe_consumo1": "residencial",
+    "tipo_fornecimento": "monofasico",
+    "ramal_energia": "aereo",
+    "data_projeto": "2026-03-06",
+}
+
 FORMULARIO_PAYLOAD = {
     "numero_uc": "1234567890",
     "classe": "residencial",

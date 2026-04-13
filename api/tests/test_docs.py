@@ -15,8 +15,10 @@ from api.tests.test_payloads import (
     COMPLETO_PAYLOAD,
     FORMULARIO_PAYLOAD,
     MEMORIAL_PAYLOAD,
+    MEMORIAL_V2_BASE,
     PROCURACAO_PAYLOAD,
     UNIFILAR_PAYLOAD,
+    UNIFILAR_V2_BASE,
 )
 
 
@@ -99,6 +101,123 @@ def test_generate_todos_documentos(client, user, token):
         assert "formulario_enel_ce.pdf" in names
         for name in names:
             assert len(zf.read(name)) > 0, f"{name} should not be empty"
+
+
+def test_generate_memorial_v2(client, token, inversor, placa):
+    """POST /docs/v2/memorialdescritivo fetches equipment specs from DB by ID."""
+    payload = {
+        **MEMORIAL_V2_BASE,
+        "inversores": [{"id_inversor": inversor.id_inversor, "quantidade": 1}],
+        "placas": [{"id_placa": placa.id_placa, "quantidade": 10}],
+    }
+    response = client.post(
+        "/docs/v2/memorialdescritivo",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    _assert_pdf_response(response)
+
+
+def test_generate_diagrama_unifilar_v2(client, token, inversor, placa):
+    """POST /docs/v2/diagramaunifilar fetches equipment specs from DB by ID."""
+    payload = {
+        **UNIFILAR_V2_BASE,
+        "sistemas": [
+            {
+                "id_inversor": inversor.id_inversor,
+                "quantidade_inversor": 1,
+                "id_placa": placa.id_placa,
+                "quantidade_placas": 10,
+            }
+        ],
+    }
+    response = client.post(
+        "/docs/v2/diagramaunifilar",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    _assert_pdf_response(response)
+
+
+def test_generate_diagrama_unifilar_v2_dois_sistemas(client, token, inversor, placa):
+    """Two-system diagram returns a valid PDF."""
+    payload = {
+        **UNIFILAR_V2_BASE,
+        "sistemas": [
+            {"id_inversor": inversor.id_inversor, "quantidade_inversor": 1,
+             "id_placa": placa.id_placa, "quantidade_placas": 10},
+            {"id_inversor": inversor.id_inversor, "quantidade_inversor": 1,
+             "id_placa": placa.id_placa, "quantidade_placas": 8},
+        ],
+    }
+    response = client.post(
+        "/docs/v2/diagramaunifilar",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    _assert_pdf_response(response)
+
+
+def test_generate_diagrama_unifilar_v2_inversor_not_found(client, token, placa):
+    payload = {
+        **UNIFILAR_V2_BASE,
+        "sistemas": [
+            {"id_inversor": 99999, "quantidade_inversor": 1,
+             "id_placa": placa.id_placa, "quantidade_placas": 10},
+        ],
+    }
+    response = client.post(
+        "/docs/v2/diagramaunifilar",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_generate_diagrama_unifilar_v2_placa_not_found(client, token, inversor):
+    payload = {
+        **UNIFILAR_V2_BASE,
+        "sistemas": [
+            {"id_inversor": inversor.id_inversor, "quantidade_inversor": 1,
+             "id_placa": 99999, "quantidade_placas": 10},
+        ],
+    }
+    response = client.post(
+        "/docs/v2/diagramaunifilar",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_generate_memorial_v2_inversor_not_found(client, token, placa):
+    """POST /docs/v2/memorialdescritivo returns 404 for unknown inversor ID."""
+    payload = {
+        **MEMORIAL_V2_BASE,
+        "inversores": [{"id_inversor": 99999, "quantidade": 1}],
+        "placas": [{"id_placa": placa.id_placa, "quantidade": 10}],
+    }
+    response = client.post(
+        "/docs/v2/memorialdescritivo",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_generate_memorial_v2_placa_not_found(client, token, inversor):
+    """POST /docs/v2/memorialdescritivo returns 404 for unknown placa ID."""
+    payload = {
+        **MEMORIAL_V2_BASE,
+        "inversores": [{"id_inversor": inversor.id_inversor, "quantidade": 1}],
+        "placas": [{"id_placa": 99999, "quantidade": 10}],
+    }
+    response = client.post(
+        "/docs/v2/memorialdescritivo",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
 
 
 def test_todos_endpoint_requires_auth(client):

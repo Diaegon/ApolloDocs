@@ -11,3 +11,8 @@ class Inversor(BaseModel):
     numero_fases: tensao_fase = "monofasico"
     tipo_de_inversor: tipo_inversor = "string"
     numero_mppt: int | None = 4  # reservado para atualizações futuras
+
+class Inversor_v2(BaseModel):
+    marca_inversor: str
+    modelo_inversor: str
+    quantidade: int

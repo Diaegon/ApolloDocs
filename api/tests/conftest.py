@@ -83,3 +83,40 @@ def token(client, user):
 @pytest.fixture
 def mock_db_time():
     return _mock_db_time
+
+
+@pytest.fixture
+def inversor(session):
+    from api.schemas.models import Inversor
+    obj = Inversor(
+        marca_inversor="DEYE",
+        modelo_inversor="SUN-5K-SG03LP1-EU",
+        potencia_inversor=5000.0,
+        numero_fases="monofasico",
+        tipo_de_inversor="string",
+        numero_mppt=2,
+    )
+    session.add(obj)
+    session.commit()
+    session.refresh(obj)
+    return obj
+
+
+@pytest.fixture
+def placa(session):
+    from api.schemas.models import Placa
+    obj = Placa(
+        marca_placa="CANADIAN SOLAR",
+        modelo_placa="CS6R-410H",
+        potencia_placa=410.0,
+        tipo_celula="monocrystalino",
+        tensao_pico=49.3,
+        corrente_curtocircuito=11.09,
+        tensao_maxima_potencia=41.8,
+        corrente_maxima_potencia=9.82,
+        eficiencia_placa=21.4,
+    )
+    session.add(obj)
+    session.commit()
+    session.refresh(obj)
+    return obj

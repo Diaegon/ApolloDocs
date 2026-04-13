@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from api.routers import auth, clientes, docs, procuradores, projetistas, projetos, users, inversores
+from api.routers import equipamentos_inversores, equipamentos_placas
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,9 +28,15 @@ app.include_router(procuradores.router)
 app.include_router(projetistas.router)
 app.include_router(projetos.router)
 app.include_router(inversores.router)
+app.include_router(equipamentos_inversores.router)
+app.include_router(equipamentos_placas.router)
 
-app.mount("/inversores", StaticFiles(directory="/app/INMETRO_INVERSORES"), name="inversores")
-
+import os
+INVERSORES_PATH = "/app/INMETRO_INVERSORES" if os.path.exists("/app/INMETRO_INVERSORES") else "INMETRO_INVERSORES"
+try:
+    app.mount("/inversores", StaticFiles(directory=INVERSORES_PATH), name="inversores")
+except RuntimeError:
+    pass
 @app.get("/", tags=["Landing Page"])
 def landing_page():
     return FileResponse(path=IMAGE_PATH, media_type="image/png")

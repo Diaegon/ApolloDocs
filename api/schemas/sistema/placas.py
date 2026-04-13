@@ -12,3 +12,8 @@ class Placa(BaseModel):
     tensao_maxima_potencia: float = 0.0
     corrente_maxima_potencia: float = 0.0
     eficiencia_placa: float | None  # reservado para atualizações futuras
+
+class Placa_v2(BaseModel):
+    marca_placa: str
+    modelo_placa: str
+    quantidade: int
