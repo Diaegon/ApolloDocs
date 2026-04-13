@@ -1,13 +1,7 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 from api.schemas.cliente.endereco import EnderecoObra
-
-
-class SistemaUnifilarRef(BaseModel):
-    id_inversor: int
-    quantidade_inversor: int = 1
-    id_placa: int
-    quantidade_placas: int = 10
+from api.schemas.sistema.materiais import MaterialInversorRef, MaterialPlacaRef
 
 
 class ProjetoUnifilarV2(BaseModel):
@@ -17,11 +11,18 @@ class ProjetoUnifilarV2(BaseModel):
     disjuntor_geral_amperes: float = 40.0
     tensao_local: int
     endereco_obra: EnderecoObra
-    sistemas: list[SistemaUnifilarRef]
+    inversores: list[MaterialInversorRef]
+    placas: list[MaterialPlacaRef]
 
-    @field_validator("sistemas")
+    @field_validator("inversores", "placas")
     @classmethod
-    def validate_sistemas(cls, v):
+    def validate_length(cls, v):
         if not 1 <= len(v) <= 3:
-            raise ValueError("sistemas must have between 1 and 3 entries")
+            raise ValueError("must have between 1 and 3 entries")
         return v
+
+    @model_validator(mode="after")
+    def validate_matching_lengths(self):
+        if len(self.inversores) != len(self.placas):
+            raise ValueError("inversores and placas must have the same length")
+        return self

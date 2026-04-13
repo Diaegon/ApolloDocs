@@ -122,14 +122,8 @@ def test_generate_diagrama_unifilar_v2(client, token, inversor, placa):
     """POST /docs/v2/diagramaunifilar fetches equipment specs from DB by ID."""
     payload = {
         **UNIFILAR_V2_BASE,
-        "sistemas": [
-            {
-                "id_inversor": inversor.id_inversor,
-                "quantidade_inversor": 1,
-                "id_placa": placa.id_placa,
-                "quantidade_placas": 10,
-            }
-        ],
+        "inversores": [{"id_inversor": inversor.id_inversor, "quantidade": 1}],
+        "placas": [{"id_placa": placa.id_placa, "quantidade": 10}],
     }
     response = client.post(
         "/docs/v2/diagramaunifilar",
@@ -143,11 +137,13 @@ def test_generate_diagrama_unifilar_v2_dois_sistemas(client, token, inversor, pl
     """Two-system diagram returns a valid PDF."""
     payload = {
         **UNIFILAR_V2_BASE,
-        "sistemas": [
-            {"id_inversor": inversor.id_inversor, "quantidade_inversor": 1,
-             "id_placa": placa.id_placa, "quantidade_placas": 10},
-            {"id_inversor": inversor.id_inversor, "quantidade_inversor": 1,
-             "id_placa": placa.id_placa, "quantidade_placas": 8},
+        "inversores": [
+            {"id_inversor": inversor.id_inversor, "quantidade": 1},
+            {"id_inversor": inversor.id_inversor, "quantidade": 1},
+        ],
+        "placas": [
+            {"id_placa": placa.id_placa, "quantidade": 10},
+            {"id_placa": placa.id_placa, "quantidade": 8},
         ],
     }
     response = client.post(
@@ -161,10 +157,8 @@ def test_generate_diagrama_unifilar_v2_dois_sistemas(client, token, inversor, pl
 def test_generate_diagrama_unifilar_v2_inversor_not_found(client, token, placa):
     payload = {
         **UNIFILAR_V2_BASE,
-        "sistemas": [
-            {"id_inversor": 99999, "quantidade_inversor": 1,
-             "id_placa": placa.id_placa, "quantidade_placas": 10},
-        ],
+        "inversores": [{"id_inversor": 99999, "quantidade": 1}],
+        "placas": [{"id_placa": placa.id_placa, "quantidade": 10}],
     }
     response = client.post(
         "/docs/v2/diagramaunifilar",
@@ -177,10 +171,8 @@ def test_generate_diagrama_unifilar_v2_inversor_not_found(client, token, placa):
 def test_generate_diagrama_unifilar_v2_placa_not_found(client, token, inversor):
     payload = {
         **UNIFILAR_V2_BASE,
-        "sistemas": [
-            {"id_inversor": inversor.id_inversor, "quantidade_inversor": 1,
-             "id_placa": 99999, "quantidade_placas": 10},
-        ],
+        "inversores": [{"id_inversor": inversor.id_inversor, "quantidade": 1}],
+        "placas": [{"id_placa": 99999, "quantidade": 10}],
     }
     response = client.post(
         "/docs/v2/diagramaunifilar",

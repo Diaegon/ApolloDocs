@@ -20,21 +20,6 @@ router = APIRouter(prefix="/docs", tags=["Documentos"])
 Sessions = Annotated[Session, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-
-@router.post("/memorialdescritivo", deprecated=True, status_code=201, response_model=None)
-async def post_data_memorial(
-    dados_entrada: ProjetoMemorial,
-    current_user: CurrentUser,
-):
-    buffer = DocsService.generate_memorial(dados_entrada)
-
-    return StreamingResponse(
-        buffer,
-        media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=memorial.pdf"},
-    )
-
-
 from api.schemas.projetos.memorial_v2 import ProjetoMemorialV2
 @router.post("/v2/memorialdescritivo", status_code=201, response_model=None)
 async def post_data_memorial_v2(
@@ -78,22 +63,6 @@ async def post_data_diagrama_unifilar_v2(
         media_type="application/pdf",
         headers={
             "Content-Disposition": "attachment; filename=diagrama_unifilar_v2.pdf"
-        },
-    )
-
-
-@router.post("/diagramaunifilar", deprecated=True, status_code=201, response_model=None)
-async def post_data_diagrama_unifilar(
-    dados: ProjetoUnifilar,
-    current_user: CurrentUser,
-):
-    buffer = DocsService.generate_diagrama_unifilar(dados)
-
-    return StreamingResponse(
-        buffer,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": "attachment; filename=diagrama_unifilar.pdf"
         },
     )
 
