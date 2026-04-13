@@ -142,7 +142,6 @@
 
   .img-diagram   { width: 10cm; height: 7cm;  }
   .img-aviso     { width: 18cm; }
-  .img-assinatura{ width: 15cm; height: 4cm;  }
 </style>
 </head>
 <body>
@@ -353,10 +352,18 @@
 <!-- ================================================================== -->
 <h2 class="section-title">8 – Responsável Técnico</h2>
 <br/><br/><br/>
-<img class="doc-image img-assinatura"
-     src="data:image/png;base64,{{ img_assinatura_b64 }}"
-     alt="Assinatura" />
-</div>
+    <div class="signature-area">
+        <div class="signature-line"></div>
+        <div class="signature-details">
+            <strong>{{ dados.nome_projetista }}</strong><br>
+            CFT/CREA: {{ dados.cft_crea_projetista }}
+        </div>
+        <div class="date">
+            {{ data }}
+        </div>
+    </div>
+
+    </div>
 
 </body>
 </html>

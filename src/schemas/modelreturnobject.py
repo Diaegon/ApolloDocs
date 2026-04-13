@@ -72,7 +72,6 @@ class Procurador:
     cidade_procurador: str = "[CIDADE DO PROCURADOR]"
     estado_procurador: str = "[ESTADO DO PROCURADOR]"
 
-
 @dataclass
 class QuantidadePlacas:
     quantidade_placas: int = 10
@@ -87,7 +86,7 @@ class Inversor:
     potencia_inversor: float = 0.0
     numero_fases: tensao_fase = "monofasico"
     tipo_de_inversor: tipo_inversor = "string"
-    numero_mppt: int | None = 4  # reservado para atualizações futuras
+    numero_mppt: int | None = 4
 
 
 @dataclass
@@ -101,7 +100,8 @@ class Placa:
     corrente_curtocircuito: float = 0.0
     tensao_maxima_potencia: float = 0.0
     corrente_maxima_potencia: float = 0.0
-    eficiencia_placa: float | None = 0.0  # reservado para atualizações futuras
+    eficiencia_placa: float | None = 0.0 
+
 
 
 @dataclass
