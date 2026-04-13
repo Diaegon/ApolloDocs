@@ -135,6 +135,24 @@ class ProjetoCompleto:
     sistema_instalado: list
     # quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
 
+from typing import Any
+
+@dataclass
+class ProjetoCompletoV2:
+    numero_unidade_consumidora: str
+    carga_instalada_kw: float
+    disjuntor_geral_amperes: float
+    energia_media_mensal_kwh: float
+    classe_consumo1: classe_consumo
+    tipo_fornecimento: tensao_fase
+    ramal_energia: ramal_de_energia
+    data_projeto: str
+    cliente: Cliente
+    endereco_obra: EnderecoObra
+    
+    inversores: list[Any]
+    placas: list[Any]
+
 
 @dataclass
 class RetornoProjetoCompleto:

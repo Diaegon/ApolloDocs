@@ -77,3 +77,5 @@ class ProjectFactory:
         )
         dados.pop("id_projeto", None)
         return ProjetoCompleto(**dados, sistema_instalado=sistema_instalado)
+
+

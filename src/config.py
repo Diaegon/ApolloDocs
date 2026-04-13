@@ -41,3 +41,9 @@ RESISTIVIDADE_COBRE: float = 0.0173
 # Assumed one-way cable run length in meters for voltage drop calculations.
 # This is the default design value used when exact run length is unknown.
 COMPRIMENTO_CABO_PADRAO_M: float = 10.0
+
+# Voltage lookup based on supply type (monofasico, bifasico, trifasico).
+FORNECIMENTO_PARA_TENSAO: dict = {"monofasico": 220, "bifasico": 220, "trifasico": 380}
+
+# Tariff class code lookup based on consumption class.
+CLASSE_PARA_CODIGO: dict = {"residencial": "B1", "rural": "B2", "comercial": "B3"}
