@@ -187,3 +187,4 @@ frontend/.env.local
 frontend/coverage/
 frontend/.turbo/
 INMETRO_INVERSORES/
+node_modules
