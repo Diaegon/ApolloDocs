@@ -21,7 +21,7 @@ Sessions = Annotated[Session, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-@router.post("/memorialdescritivo", status_code=201, response_model=None)
+@router.post("/memorialdescritivo", deprecated=True, status_code=201, response_model=None)
 async def post_data_memorial(
     dados_entrada: ProjetoMemorial,
     current_user: CurrentUser,
@@ -82,7 +82,7 @@ async def post_data_diagrama_unifilar_v2(
     )
 
 
-@router.post("/diagramaunifilar", status_code=201, response_model=None)
+@router.post("/diagramaunifilar", deprecated=True, status_code=201, response_model=None)
 async def post_data_diagrama_unifilar(
     dados: ProjetoUnifilar,
     current_user: CurrentUser,
