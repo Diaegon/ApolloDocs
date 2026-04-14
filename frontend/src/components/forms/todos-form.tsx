@@ -1,7 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import {
   projetoTodosSchema,
   type ProjetoTodosFormData,
@@ -11,129 +12,83 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormField } from "@/components/ui/form-field";
 import { useGenerateDoc } from "@/hooks/use-generate-doc";
-import { normalizeTodosPayload } from "@/lib/payload/normalize";
-import { FileArchive, Sparkles } from "lucide-react";
-import { SistemaSection } from "@/components/forms/shared/sistema-section";
+import { FileArchive, Plus } from "lucide-react";
+import {
+  InversorCascadeRow,
+  PlacaCascadeRow,
+} from "@/components/forms/shared/catalog-cascade-select";
 import {
   FASES_OPTIONS,
   CLASSE_CONSUMO_OPTIONS,
   RAMAL_OPTIONS,
-  QUANTIDADE_SISTEMAS_OPTIONS,
 } from "@/components/forms/shared/form-options";
+import type { InversorPublic, PlacaPublic } from "@/types/docs";
 
 export function TodosForm() {
   const { generate, pdfUrl, filename, isLoading, error, reset } =
     useGenerateDoc({ docType: "todos" });
 
+  const { data: inversoresData } = useQuery<{ inversores: InversorPublic[] }>({
+    queryKey: ["catalogo", "inversores"],
+    queryFn: () =>
+      fetch("/api/equipamentos/inversores", { credentials: "same-origin" }).then(
+        (r) => r.json()
+      ),
+  });
+
+  const { data: placasData } = useQuery<{ placas: PlacaPublic[] }>({
+    queryKey: ["catalogo", "placas"],
+    queryFn: () =>
+      fetch("/api/equipamentos/placas", { credentials: "same-origin" }).then(
+        (r) => r.json()
+      ),
+  });
+
+  const inversores = inversoresData?.inversores ?? [];
+  const placas = placasData?.placas ?? [];
+
   const {
     register,
     handleSubmit,
-    watch,
-    reset: resetForm,
+    control,
+    setValue,
     formState: { errors },
   } = useForm<ProjetoTodosFormData>({
     resolver: zodResolver(projetoTodosSchema),
     defaultValues: {
-      quantidade_sistemas_instalados: 1,
+      inversores: [{ id_inversor: 0, quantidade: 1 }],
+      placas: [{ id_placa: 0, quantidade: 10 }],
     },
   });
 
-  const qtdSistemas = watch("quantidade_sistemas_instalados") ?? 1;
+  const {
+    fields: inversorFields,
+    append: appendInversor,
+    remove: removeInversor,
+  } = useFieldArray({ control, name: "inversores" });
+
+  const {
+    fields: placaFields,
+    append: appendPlaca,
+    remove: removePlaca,
+  } = useFieldArray({ control, name: "placas" });
 
   function onSubmit(data: ProjetoTodosFormData) {
-    generate(normalizeTodosPayload(data));
-  }
-
-  function fillDevData() {
-    resetForm({
-      nome_projetista: "Eng. Teste",
-      cft_crea_projetista: "123456",
-      numero_unidade_consumidora: "123456789",
-      data_projeto: "2026-01-15",
-      carga_instalada_kw: 5.5,
-      disjuntor_geral_amperes: 40,
-      energia_media_mensal_kwh: 350,
-      tensao_local: 220,
-      potencia_geracao: 5000,
-      classe_consumo: "residencial",
-      tipo_fornecimento: "monofasico",
-      ramal_energia: "aereo",
-      quantidade_sistemas_instalados: 1,
-      cliente: {
-        nome_cliente: "João Tester",
-        cpf: "123.456.789-00",
-        rg: "1234567",
-        data_nascimento: "1990-01-01",
-        telefone_cliente: "(85) 99999-9999",
-        email_cliente: "joao@teste.com"
-      },
-      endereco_cliente: {
-        logradouro_cliente: "Rua Teste",
-        numero_casa_cliente: "123",
-        cep_cliente: "60000-000",
-        bairro_cliente: "Centro",
-        cidade_cliente: "Fortaleza",
-        estado_cliente: "CE"
-      },
-      endereco_obra: {
-        logradouro_obra: "Rua Obra",
-        numero_obra: "456",
-        cep_obra: "60000-000",
-        bairro_obra: "Aldeota",
-        cidade_obra: "Fortaleza",
-        estado_obra: "CE"
-      },
-      procurador: {
-        nome_procurador: "Procurador Teste",
-        cpf_procurador: "987.654.321-00",
-        rg_procurador: "7654321",
-        telefone_procurador: "(85) 88888-8888",
-        email_procurador: "procurador@teste.com",
-        logradouro_procurador: "Av Procurador",
-        numero_casa_procurador: "789",
-        cep_procurador: "60000-000",
-        bairro_procurador: "Meireles",
-        cidade_procurador: "Fortaleza",
-        estado_procurador: "CE"
-      },
-      sistema_instalado1: {
-        inversor: {
-          marca_inversor: "Growatt",
-          modelo_inversor: "MIN 6000TL-X",
-          potencia_inversor: 6,
-          numero_fases: "monofasico",
-          tipo_de_inversor: "string",
-        },
-        quantidade_inversor: 1,
-        placa: {
-          marca_placa: "Canadian",
-          modelo_placa: "CS6R",
-          potencia_placa: 420,
-          tipo_celula: "Mono",
-          tensao_pico: 49.1,
-          corrente_curtocircuito: 11.2,
-          tensao_maxima_potencia: 41.3,
-          corrente_maxima_potencia: 10.1,
-        },
-        quantidade_total_placas_do_sistema: {
-          quantidade_placas: 12,
-        },
-      },
-    } as ProjetoTodosFormData);
+    generate(data);
   }
 
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
-        {/* Informações Institucionais (Projetista) */}
+        {/* Dados do Projetista */}
         <fieldset className="form-section space-y-4">
           <legend>Dados do Projetista</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField label="Nome do Projetista" htmlFor="nome_projetista" error={errors.nome_projetista?.message} required>
-              <Input id="nome_projetista" placeholder="Nome Completo" {...register("nome_projetista")} />
+              <Input id="nome_projetista" placeholder="Eng. Carlos Lima" error={errors.nome_projetista?.message} {...register("nome_projetista")} />
             </FormField>
             <FormField label="CFT / CREA" htmlFor="cft_crea_projetista" error={errors.cft_crea_projetista?.message} required>
-              <Input id="cft_crea_projetista" placeholder="Número do Registro" {...register("cft_crea_projetista")} />
+              <Input id="cft_crea_projetista" placeholder="CREA-CE 12345" error={errors.cft_crea_projetista?.message} {...register("cft_crea_projetista")} />
             </FormField>
           </div>
         </fieldset>
@@ -143,41 +98,35 @@ export function TodosForm() {
           <legend>Informações do Projeto</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <FormField label="Número da UC" htmlFor="numero_unidade_consumidora" error={errors.numero_unidade_consumidora?.message} required>
-              <Input id="numero_unidade_consumidora" {...register("numero_unidade_consumidora")} />
+              <Input id="numero_unidade_consumidora" placeholder="123456789" error={errors.numero_unidade_consumidora?.message} {...register("numero_unidade_consumidora")} />
             </FormField>
             <FormField label="Data do Projeto" htmlFor="data_projeto" error={errors.data_projeto?.message} required>
-              <Input type="date" {...register("data_projeto")} />
+              <Input id="data_projeto" type="date" error={errors.data_projeto?.message} {...register("data_projeto")} />
             </FormField>
             <FormField label="Carga Instalada (kW)" htmlFor="carga_instalada_kw" error={errors.carga_instalada_kw?.message} required>
-              <Input type="number" step="0.01" {...register("carga_instalada_kw", { valueAsNumber: true })} />
+              <Input id="carga_instalada_kw" type="number" step="0.01" placeholder="5.5" error={errors.carga_instalada_kw?.message} {...register("carga_instalada_kw", { valueAsNumber: true })} />
             </FormField>
             <FormField label="Disjuntor Geral (A)" htmlFor="disjuntor_geral_amperes" error={errors.disjuntor_geral_amperes?.message} required>
-              <Input type="number" {...register("disjuntor_geral_amperes", { valueAsNumber: true })} />
+              <Input id="disjuntor_geral_amperes" type="number" placeholder="40" error={errors.disjuntor_geral_amperes?.message} {...register("disjuntor_geral_amperes", { valueAsNumber: true })} />
             </FormField>
             <FormField label="Energia Média Mensal (kWh)" htmlFor="energia_media_mensal_kwh" error={errors.energia_media_mensal_kwh?.message} required>
-              <Input type="number" step="0.01" {...register("energia_media_mensal_kwh", { valueAsNumber: true })} />
+              <Input id="energia_media_mensal_kwh" type="number" step="0.01" placeholder="350" error={errors.energia_media_mensal_kwh?.message} {...register("energia_media_mensal_kwh", { valueAsNumber: true })} />
             </FormField>
             <FormField label="Tensão Local (V)" htmlFor="tensao_local" error={errors.tensao_local?.message} required>
-              <Input type="number" {...register("tensao_local", { valueAsNumber: true })} />
+              <Input id="tensao_local" type="number" placeholder="220" error={errors.tensao_local?.message} {...register("tensao_local", { valueAsNumber: true })} />
             </FormField>
-            <FormField label="Potência de Geração" htmlFor="potencia_geracao" error={errors.potencia_geracao?.message} required>
-              <Input type="number" {...register("potencia_geracao", { valueAsNumber: true })} />
+            <FormField label="Potência de Geração (W)" htmlFor="potencia_geracao" error={errors.potencia_geracao?.message} required>
+              <Input id="potencia_geracao" type="number" placeholder="5000" error={errors.potencia_geracao?.message} {...register("potencia_geracao", { valueAsNumber: true })} />
             </FormField>
             <FormField label="Classe de Consumo" htmlFor="classe_consumo" error={errors.classe_consumo?.message} required>
-              <Select options={[...CLASSE_CONSUMO_OPTIONS]} {...register("classe_consumo")} />
+              <Select id="classe_consumo" options={[...CLASSE_CONSUMO_OPTIONS]} placeholder="Selecione" error={errors.classe_consumo?.message} {...register("classe_consumo")} />
             </FormField>
             <FormField label="Tipo de Fornecimento" htmlFor="tipo_fornecimento" error={errors.tipo_fornecimento?.message} required>
-              <Select options={[...FASES_OPTIONS]} {...register("tipo_fornecimento")} />
+              <Select id="tipo_fornecimento" options={[...FASES_OPTIONS]} placeholder="Selecione" error={errors.tipo_fornecimento?.message} {...register("tipo_fornecimento")} />
             </FormField>
             <FormField label="Ramal de Energia" htmlFor="ramal_energia" error={errors.ramal_energia?.message} required>
-              <Select options={[...RAMAL_OPTIONS]} {...register("ramal_energia")} />
+              <Select id="ramal_energia" options={[...RAMAL_OPTIONS]} placeholder="Selecione" error={errors.ramal_energia?.message} {...register("ramal_energia")} />
             </FormField>
-
-            <div className="col-span-1 sm:col-span-3">
-              <FormField label="Quantidade de Sistemas" htmlFor="quantidade_sistemas_instalados" error={errors.quantidade_sistemas_instalados?.message} required>
-                <Select className="w-40" options={[...QUANTIDADE_SISTEMAS_OPTIONS]} {...register("quantidade_sistemas_instalados", { valueAsNumber: true })} />
-              </FormField>
-            </div>
           </div>
         </fieldset>
 
@@ -189,19 +138,19 @@ export function TodosForm() {
               <Input id="cliente.nome_cliente" {...register("cliente.nome_cliente")} />
             </FormField>
             <FormField label="CPF" htmlFor="cliente.cpf" error={errors.cliente?.cpf?.message} required>
-              <Input id="cliente.cpf" {...register("cliente.cpf")} />
+              <Input id="cliente.cpf" placeholder="000.000.000-00" {...register("cliente.cpf")} />
             </FormField>
             <FormField label="RG" htmlFor="cliente.rg" error={errors.cliente?.rg?.message} required>
               <Input id="cliente.rg" {...register("cliente.rg")} />
             </FormField>
             <FormField label="Data de Nascimento" htmlFor="cliente.data_nascimento" error={errors.cliente?.data_nascimento?.message} required>
-              <Input type="date" {...register("cliente.data_nascimento")} />
+              <Input id="cliente.data_nascimento" type="date" {...register("cliente.data_nascimento")} />
             </FormField>
             <FormField label="Telefone" htmlFor="cliente.telefone_cliente" error={errors.cliente?.telefone_cliente?.message} required>
               <Input id="cliente.telefone_cliente" {...register("cliente.telefone_cliente")} />
             </FormField>
             <FormField label="E-mail" htmlFor="cliente.email_cliente" error={errors.cliente?.email_cliente?.message} required>
-              <Input type="email" {...register("cliente.email_cliente")} />
+              <Input id="cliente.email_cliente" type="email" {...register("cliente.email_cliente")} />
             </FormField>
           </div>
           <h4 className="mt-4 mb-2 text-sm font-semibold text-gray-700">Endereço do Cliente</h4>
@@ -304,10 +253,61 @@ export function TodosForm() {
           </div>
         </fieldset>
 
-        {/* Sistemas Instalados */}
-        <SistemaSection index={1} register={register} errors={errors} />
-        {qtdSistemas >= 2 && <SistemaSection index={2} register={register} errors={errors} />}
-        {qtdSistemas >= 3 && <SistemaSection index={3} register={register} errors={errors} />}
+        {/* Inversores */}
+        <fieldset className="form-section space-y-3">
+          <legend>Inversores</legend>
+          {inversorFields.map((field, i) => (
+            <InversorCascadeRow
+              key={field.id}
+              inversores={inversores}
+              index={i}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+              onRemove={inversorFields.length > 1 ? () => removeInversor(i) : undefined}
+            />
+          ))}
+          {inversorFields.length < 3 && (
+            <button
+              type="button"
+              onClick={() => appendInversor({ id_inversor: 0, quantidade: 1 })}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Adicionar inversor
+            </button>
+          )}
+        </fieldset>
+
+        {/* Módulos Fotovoltaicos */}
+        <fieldset className="form-section space-y-3">
+          <legend>Módulos Fotovoltaicos</legend>
+          {placaFields.map((field, i) => (
+            <PlacaCascadeRow
+              key={field.id}
+              placas={placas}
+              index={i}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+              onRemove={placaFields.length > 1 ? () => removePlaca(i) : undefined}
+            />
+          ))}
+          {placaFields.length < 3 && (
+            <button
+              type="button"
+              onClick={() => appendPlaca({ id_placa: 0, quantidade: 10 })}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Adicionar módulo
+            </button>
+          )}
+
+          {errors.placas?.root?.message && (
+            <p className="text-sm text-red-600">{errors.placas.root.message}</p>
+          )}
+        </fieldset>
 
         {error && (
           <div className="rounded-md bg-red-50 p-4 text-sm text-red-700" role="alert">
@@ -320,12 +320,6 @@ export function TodosForm() {
             <FileArchive className="h-5 w-5" aria-hidden="true" />
             {isLoading ? "Gerando ZIP…" : "Gerar ZIP de Documentos"}
           </Button>
-          {!pdfUrl && (
-            <Button type="button" variant="secondary" size="lg" onClick={fillDevData} className="gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50">
-              <Sparkles className="h-4 w-4" />
-              Preencher Teste
-            </Button>
-          )}
           {pdfUrl && (
             <Button type="button" variant="secondary" size="lg" onClick={reset}>
               Nova geração

@@ -144,3 +144,61 @@ export const projetoMemorialSchema = z.object({
 });
 
 export type ProjetoMemorialFormData = z.infer<typeof projetoMemorialSchema>;
+
+// ─── v2 schemas (catalog-driven, no inline specs) ────────────────────────────
+
+export const materialInversorRefSchema = z.object({
+  // id_inversor comes from a <select> (string value) → coerce to int
+  id_inversor: z.coerce
+    .number({ invalid_type_error: "Selecione um inversor" })
+    .int()
+    .positive("Selecione um inversor"),
+  quantidade: z.coerce
+    .number({ invalid_type_error: "Quantidade é obrigatória" })
+    .int()
+    .positive("Quantidade deve ser positiva")
+    .default(1),
+});
+
+export const materialPlacaRefSchema = z.object({
+  id_placa: z.coerce
+    .number({ invalid_type_error: "Selecione um módulo" })
+    .int()
+    .positive("Selecione um módulo"),
+  quantidade: z.coerce
+    .number({ invalid_type_error: "Quantidade é obrigatória" })
+    .int()
+    .positive("Quantidade deve ser positiva")
+    .default(10),
+});
+
+export const projetoMemorialV2Schema = z.object({
+  cliente: clienteSchema.optional(),
+  endereco_obra: enderecoObraSchema.optional(),
+  numero_unidade_consumidora: z
+    .string()
+    .min(1, "Número da unidade consumidora é obrigatório"),
+  carga_instalada_kw: z
+    .number({ invalid_type_error: "Carga instalada é obrigatória" })
+    .positive("Carga instalada deve ser positiva"),
+  disjuntor_geral_amperes: z
+    .number({ invalid_type_error: "Disjuntor geral é obrigatório" })
+    .positive("Disjuntor deve ser positivo"),
+  energia_media_mensal_kwh: z
+    .number({ invalid_type_error: "Energia média mensal é obrigatória" })
+    .positive("Energia média deve ser positiva"),
+  classe_consumo1: classeConsumoEnum,
+  tipo_fornecimento: tipoFornecimentoEnum,
+  ramal_energia: ramalEnergiaEnum,
+  data_projeto: z.string().min(1, "Data do projeto é obrigatória"),
+  inversores: z
+    .array(materialInversorRefSchema)
+    .min(1, "Adicione ao menos um inversor")
+    .max(3),
+  placas: z
+    .array(materialPlacaRefSchema)
+    .min(1, "Adicione ao menos um módulo")
+    .max(3),
+});
+
+export type ProjetoMemorialV2FormData = z.infer<typeof projetoMemorialV2Schema>;

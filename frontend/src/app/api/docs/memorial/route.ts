@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateMemorialDescritivo } from "@/lib/api/docs";
-import type { ProjetoMemorial } from "@/types/docs";
+import { generateMemorialDescritivoV2 } from "@/lib/api/docs";
+import type { ProjetoMemorialV2 } from "@/types/docs";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json() as ProjetoMemorial;
-    const pdfResponse = await generateMemorialDescritivo(body);
+    const body = await request.json() as ProjetoMemorialV2;
+    const pdfResponse = await generateMemorialDescritivoV2(body);
 
     if (!pdfResponse.ok) {
       const errorText = await pdfResponse.text();

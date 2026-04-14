@@ -5,6 +5,10 @@ import type {
   ProjetoUnifilar,
   ProjetoFormularioEnelCe,
   ProjetoTodos,
+  ProjetoMemorialV2,
+  ProjetoUnifilarV2,
+  InversorPublic,
+  PlacaPublic,
 } from "@/types/docs";
 
 /**
@@ -67,6 +71,42 @@ export async function generateTodosDocumentos(
   data: ProjetoTodos
 ): Promise<Response> {
   return apiFetch("/docs/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
+// ─── Equipment catalog (v2) ──────────────────────────────────────────────────
+
+export async function getInversores(): Promise<{ inversores: InversorPublic[] }> {
+  const res = await apiFetch("/equipamentos/inversores/");
+  if (!res.ok) throw new Error("Failed to fetch inversores");
+  return res.json();
+}
+
+export async function getPlacas(): Promise<{ placas: PlacaPublic[] }> {
+  const res = await apiFetch("/equipamentos/placas/");
+  if (!res.ok) throw new Error("Failed to fetch placas");
+  return res.json();
+}
+
+// ─── v2 document endpoints ───────────────────────────────────────────────────
+
+export async function generateMemorialDescritivoV2(
+  data: ProjetoMemorialV2
+): Promise<Response> {
+  return apiFetch("/docs/v2/memorialdescritivo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function generateDiagramaUnifilarV2(
+  data: ProjetoUnifilarV2
+): Promise<Response> {
+  return apiFetch("/docs/v2/diagramaunifilar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),

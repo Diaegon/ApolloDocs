@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateDiagramaUnifilar } from "@/lib/api/docs";
-import type { ProjetoUnifilar } from "@/types/docs";
+import { generateDiagramaUnifilarV2 } from "@/lib/api/docs";
+import type { ProjetoUnifilarV2 } from "@/types/docs";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json() as ProjetoUnifilar;
-    const pdfResponse = await generateDiagramaUnifilar(body);
+    const body = await request.json() as ProjetoUnifilarV2;
+    const pdfResponse = await generateDiagramaUnifilarV2(body);
 
     if (!pdfResponse.ok) {
       const errorText = await pdfResponse.text();

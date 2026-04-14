@@ -156,7 +156,6 @@ export interface ProjetoFormularioEnelCe {
 }
 
 export interface ProjetoTodos {
-  id_projeto: number | null;
   nome_projetista: string;
   cft_crea_projetista: string;
   cliente: Cliente;
@@ -173,10 +172,73 @@ export interface ProjetoTodos {
   tensao_local: number;
   potencia_geracao: number;
   data_projeto: string;
-  quantidade_sistemas_instalados: QuantidadeSistemas;
-  sistema_instalado1: ConfiguracaoSistema;
-  sistema_instalado2?: ConfiguracaoSistema;
-  sistema_instalado3?: ConfiguracaoSistema;
+  inversores: MaterialInversorRef[];
+  placas: MaterialPlacaRef[];
+}
+
+// ─── Equipment catalog (v2) ──────────────────────────────────────────────────
+
+export interface InversorPublic {
+  id_inversor: number;
+  marca_inversor: string;
+  modelo_inversor: string;
+  potencia_inversor: number;   // Watts (e.g. 5000 for 5 kW)
+  numero_fases: NumeroFases;
+  tipo_de_inversor: TipoInversor;
+  numero_mppt: number | null;
+}
+
+export interface PlacaPublic {
+  id_placa: number;
+  marca_placa: string;
+  modelo_placa: string;
+  potencia_placa: number;              // Wp
+  tipo_celula: string;
+  tensao_pico: number;                 // Voc
+  corrente_curtocircuito: number;      // Isc
+  tensao_maxima_potencia: number;      // Vmpp
+  corrente_maxima_potencia: number;    // Impp
+  eficiencia_placa: number | null;
+}
+
+// ─── v2 project types ────────────────────────────────────────────────────────
+
+export interface MaterialInversorRef {
+  id_inversor: number;
+  quantidade: number;
+}
+
+export interface MaterialPlacaRef {
+  id_placa: number;
+  quantidade: number;
+}
+
+export interface ProjetoMemorialV2 {
+  cliente?: Cliente;
+  endereco_obra?: EnderecoObra;
+  numero_unidade_consumidora: string;
+  carga_instalada_kw: number;
+  disjuntor_geral_amperes: number;
+  energia_media_mensal_kwh: number;
+  classe_consumo1: ClasseConsumo;
+  tipo_fornecimento: TipoFornecimento;
+  ramal_energia: RamalEnergia;
+  data_projeto: string;
+  inversores: MaterialInversorRef[];
+  placas: MaterialPlacaRef[];
+}
+
+export interface ProjetoUnifilarV2 {
+  nome_projetista: string;
+  cft_crea_projetista: string;
+  nome_cliente: string;
+  disjuntor_geral_amperes: number;
+  tensao_local: number;
+  endereco_obra: EnderecoObra;
+  // Same flat structure as memorial v2 — backend zips by position.
+  // len(inversores) must equal len(placas).
+  inversores: MaterialInversorRef[];
+  placas: MaterialPlacaRef[];
 }
 
 // ─── API response ────────────────────────────────────────────────────────────

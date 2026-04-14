@@ -97,21 +97,3 @@ export function normalizeUnifilarPayload(
   };
 }
 
-import type { ProjetoTodosFormData } from "@/lib/validations/todos";
-import type { ProjetoTodos } from "@/types/docs";
-
-export function normalizeTodosPayload(
-  data: ProjetoTodosFormData
-): ProjetoTodos {
-  return {
-    ...data,
-    id_projeto: data.id_projeto ?? null,
-    sistema_instalado1: normalizeSistema(data.sistema_instalado1),
-    sistema_instalado2: data.sistema_instalado2
-      ? normalizeSistema(data.sistema_instalado2)
-      : undefined,
-    sistema_instalado3: data.sistema_instalado3
-      ? normalizeSistema(data.sistema_instalado3)
-      : undefined,
-  };
-}
