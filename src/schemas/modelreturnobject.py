@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Any
 
 from src.schemas.models import (
     classe_consumo,
@@ -8,70 +9,6 @@ from src.schemas.models import (
 )
 
 
-@dataclass()
-class Cliente:
-    id_cliente: int
-    nome_cliente: str
-    cpf: str
-    data_nascimento: str
-    razao_social: str
-    nome_fantasia: str
-    cnpj: str
-    rg: str
-    telefone_cliente: str
-    email_cliente: str
-
-
-@dataclass
-class EnderecoCliente:
-    logradouro_cliente: str
-    numero_casa_cliente: str
-    complemento_casa_cliente: str
-    cep_cliente: str
-    bairro_cliente: str
-    cidade_cliente: str
-    estado_cliente: str
-
-
-@dataclass
-class EnderecoObra:
-    logradouro_obra: str
-    numero_obra: str
-    complemento_obra: str
-    cep_obra: str
-    bairro_obra: str
-    cidade_obra: str
-    estado_obra: str
-    latitude_obra: str
-    longitude_obra: str
-
-
-@dataclass
-class Projetista:
-    id_projetista: int | None = None
-    nome_projetista: str = "[NOME DO PROJETISTA]"
-    creci_projetista: str = "[CRECI DO PROJETISTA]"
-    rubrica_projetista: str = "[RUBRICA DO PROJETISTA]"
-    telefone_projetista: str = "[TELEFONE DO PROJETISTA]"
-    email_projetista: str = "email@projeto.br"
-
-
-@dataclass
-class Procurador:
-    id_procurador: int | None = None
-    nome_procurador: str = "[NOME DO PROCURADOR]"
-    cpf_procurador: str = "[CPF DO PROCURADOR]"
-    rg_procurador: str = "[RG DO PROCURADOR]"
-    telefone_procurador: str = "[TELEFONE DO PROCURADOR]"
-    email_procurador: str = "email@procurador.br"
-    logradouro_procurador: str = "[LOGRADOURO DO PROCURADOR]"
-    numero_casa_procurador: str = "[NÚMERO DA CASA DO PROCURADOR]"
-    complemento_procurador: str | None = None
-    cep_procurador: str = "[CEP DO PROCURADOR]"
-    bairro_procurador: str = "[BAIRRO DO PROCURADOR]"
-    cidade_procurador: str = "[CIDADE DO PROCURADOR]"
-    estado_procurador: str = "[ESTADO DO PROCURADOR]"
-
 @dataclass
 class QuantidadePlacas:
     quantidade_placas: int = 10
@@ -80,7 +17,7 @@ class QuantidadePlacas:
 
 @dataclass
 class Inversor:
-    id_inversor: int | None
+    id_inversor: int | None = None
     marca_inversor: str = "[MARCA DO INVERSOR]"
     modelo_inversor: str = "[MODELO DO INVERSOR]"
     potencia_inversor: float = 0.0
@@ -91,7 +28,7 @@ class Inversor:
 
 @dataclass
 class Placa:
-    id_placa: int | None = 1
+    id_placa: int | None = None
     marca_placa: str = "[MARCA DA PLACA]"
     modelo_placa: str = "[MODELO DA PLACA]"
     potencia_placa: float = 0.0
@@ -100,8 +37,7 @@ class Placa:
     corrente_curtocircuito: float = 0.0
     tensao_maxima_potencia: float = 0.0
     corrente_maxima_potencia: float = 0.0
-    eficiencia_placa: float | None = 0.0 
-
+    eficiencia_placa: float | None = 0.0
 
 
 @dataclass
@@ -116,28 +52,6 @@ class ConfiguracaoSistema:
 
 
 @dataclass
-class ProjetoCompleto:
-    
-
-    numero_unidade_consumidora: str
-    carga_instalada_kw: float
-    disjuntor_geral_amperes: float
-    energia_media_mensal_kwh: float
-    classe_consumo1: classe_consumo
-    tipo_fornecimento: tensao_fase
-    ramal_energia: ramal_de_energia
-    data_projeto: str
-    quantidade_sistemas_instalados: int
-
-    cliente: Cliente
-    endereco_obra: EnderecoObra
-
-    sistema_instalado: list
-    # quantidades de placas e inversores, por enquanto definidas pelo json de entrada.
-
-from typing import Any
-
-@dataclass
 class ProjetoCompletoV2:
     numero_unidade_consumidora: str
     carga_instalada_kw: float
@@ -147,16 +61,14 @@ class ProjetoCompletoV2:
     tipo_fornecimento: tensao_fase
     ramal_energia: ramal_de_energia
     data_projeto: str
-    cliente: Cliente
-    endereco_obra: EnderecoObra
-    
+    cliente: Any
+    endereco_obra: Any
     inversores: list[Any]
     placas: list[Any]
 
 
 @dataclass
 class RetornoProjetoCompleto:
-    # memorial descritivo
     # endereço da obra
     logradouro_obra: str
     numero_obra: str
@@ -216,7 +128,6 @@ class RetornoProjetoCompleto:
     potencia_inversores: list[float]
     corrente_saida_por_inversor: list[float]
     inversor_tensao: list[float]
-    #####
     potencia_efetiva: float
     energia_gerada_mensal: float
     queda_tensao: float
@@ -231,7 +142,7 @@ class RetornoProjetoCompleto:
 class RetornoProjetoDiagrama:
     quantidade_sistemas_instalados: int
 
-    endereco_obra: EnderecoObra
+    endereco_obra: Any
 
     nome_projetista: str
     cft_crea_projetista: str
@@ -261,26 +172,3 @@ class RetornoProjetoDiagrama:
     texto_paineis3: str | None = None
     texto_inversor2: str | None = None
     texto_inversor3: str | None = None
-
-
-@dataclass
-class RetornoProjetoFormulario:
-    numero_uc: str
-    classe_consumo: str
-    ramal_energia: str
-    nome_cliente: str
-    cpf: str
-    telefone_cliente: str
-    email_cliente: str
-
-    endereco_obra: EnderecoObra
-
-    tensao_local: int
-    carga_instalada_kw: float
-
-    potencia_geracao: int
-
-    nome_procurador: str
-    cpf_procurador: str
-    email_procurador: str
-    data_hoje: str
