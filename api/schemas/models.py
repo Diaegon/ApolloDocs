@@ -49,8 +49,10 @@ class Inversor:
     modelo_inversor: Mapped[str]
     potencia_inversor: Mapped[float]
     numero_fases: Mapped[tensao_fase]
-    tipo_de_inversor: Mapped[tipo_inversor]
+    tipo_de_inversor: Mapped[tipo_inversor | None]
     numero_mppt: Mapped[int | None]
+    strings_por_mppt: Mapped[int | None]
+    total_strings: Mapped[int | None]
 
 
 @mapped_as_dataclass(table_registry)
@@ -61,12 +63,17 @@ class Placa:
     marca_placa: Mapped[str]
     modelo_placa: Mapped[str]
     potencia_placa: Mapped[float]
-    tipo_celula: Mapped[str]
+    tipo_celula: Mapped[str | None]
     tensao_pico: Mapped[float]
     corrente_curtocircuito: Mapped[float]
     tensao_maxima_potencia: Mapped[float]
     corrente_maxima_potencia: Mapped[float]
     eficiencia_placa: Mapped[float | None]
+    rendimento_ano_1: Mapped[float | None]
+    rendimento_ano_25: Mapped[float | None]
+    peso: Mapped[float | None]
+    largura: Mapped[float | None]
+    altura: Mapped[float | None]
 
 
 @mapped_as_dataclass(table_registry)

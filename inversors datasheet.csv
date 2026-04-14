@@ -1,0 +1,37 @@
+brand,model,power_kw,mppt_number,strings_per_mppt,total_strings,inverter_type,phase
+Canadian Solar,CSI-5K-S22002-E,5.0,2,1,2,string,monofasico
+Canadian Solar,CSI-7K-S22002-E,7.0,2,2,4,string,monofasico
+Hoymiles,HMS-1875DW-4T,"1,875",4,1,4,microinversor,monofasico
+Hoymiles,HMS-2000-4T,2,4,1,4,microinversor,monofasico
+Hoymiles,HMS-2000DW-4T,2,4,1,4,microinversor,monofasico
+Solplanet,ASW10000-S,10,3,1,3,string,monofasico
+Solplanet,ASW110K-LT,110,10,2,20,string,trifasico
+Solplanet,ASW12K-LT-G2-PRO,12,2,3,6,string,trifasico
+Solplanet,ASW12K-LT-G2-PRO (AFCI),12,2,3,6,string,trifasico
+Solplanet,ASW12KH-T3,12,3,1,6,string-hybrid,trifasico
+Solplanet,ASW15K-LT-G2-PRO,15,2,3,6,string,trifasico
+Solplanet,ASW15K-UT-G3,15,2,2,4,string,trifasico
+Solplanet,ASW17K-LT-G2-PRO,17,2,2,4,string,trifasico
+Solplanet,ASW20K-LT-G2-PRO,20,2,2,4,string,trifasico
+Solplanet,ASW20K-UT-G3,20,3,2,6,string,trifasico
+Solplanet,ASW250K-HT,250,5,5,25,string,trifasico
+Solplanet,ASW25K-LT-G2-PRO,25,2,2,4,string,trifasico
+Solplanet,ASW25K-UT-G3,25,3,2,6,string,trifasico
+Solplanet,ASW25K-UT-G3 (AFCI),25,3,2,6,string,trifasico
+Solplanet,ASW3000-S-G2,3,2,1,2,string,trifasico
+Solplanet,ASW30K-LT-G3,30,4,2,8,string,trifasico
+Solplanet,ASW30K-UT-G3,30,4,2,8,string,trifasico
+Solplanet,ASW30K-UT-G3 (AFCI),30,4,2,8,string,trifasico
+Solplanet,ASW33K-LT-G3,33,4,2,8,string,trifasico
+Solplanet,ASW36K-LT-G3,36,4,2,8,string,trifasico
+Solplanet,ASW36K-UT-G3,36,4,2,8,string,trifasico
+Solplanet,ASW37.5K-UT-G3,37.5,4,2,8,string,trifasico
+Solplanet,ASW4000-S-G2,4,2,1,2,string,monofasico
+Solplanet,ASW40K-LT-G3,40,3,6,12,string,trifasico
+Solplanet,ASW5000-S-G2,5,2,1,2,string,monofasico
+Solplanet,ASW50K-LT-G3,50,5,2,10,string,trifasico
+Solplanet,ASW6000-S-G2,6,2,1,2,string,monofasico
+Solplanet,ASW6000H-S2,6,2,1,2,string-hybrid,monofasico
+Solplanet,ASW7500-S,7.5,3,1,3,string,monofasico
+Solplanet,ASW75K-LT,75,8,2,16,string,trifasico
+Solplanet,ASW9100-S,9.1,3,1,3,string,monofasico

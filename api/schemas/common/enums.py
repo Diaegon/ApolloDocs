@@ -28,6 +28,7 @@ class ramal_de_energia(BaseEnum):
 class tipo_inversor(BaseEnum):
     STRING = "string"
     MICRO = "micro"
+    STRING_HYBRID = "string-hybrid"
 
 
 class quantidade_sistemas(int, Enum):
