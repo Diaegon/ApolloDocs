@@ -1,11 +1,13 @@
 import zipfile
 from io import BytesIO
 
+from sqlalchemy.orm import Session
+
 from api.schemas.projetos.completo import ProjetoTodos
 from api.schemas.projetos.formularioenelce import ProjetoFormularioEnelCe
-from api.schemas.projetos.memorial import ProjetoMemorial
+from api.schemas.projetos.memorial_v2 import ProjetoMemorialV2
 from api.schemas.projetos.procuracao import ProjetoProcuracao
-from api.schemas.projetos.unifilar import ProjetoUnifilar
+from api.schemas.projetos.unifilar_v2 import ProjetoUnifilarV2
 from api.services.docs_service import DocsService
 
 
@@ -16,9 +18,8 @@ class AllDocsService:
     """
 
     @staticmethod
-    def _to_memorial(data: ProjetoTodos) -> ProjetoMemorial:
-        return ProjetoMemorial(
-            id_projeto=data.id_projeto,
+    def _to_memorial_v2(data: ProjetoTodos) -> ProjetoMemorialV2:
+        return ProjetoMemorialV2(
             cliente=data.cliente,
             endereco_obra=data.endereco_obra,
             numero_unidade_consumidora=data.numero_unidade_consumidora,
@@ -29,16 +30,14 @@ class AllDocsService:
             tipo_fornecimento=data.tipo_fornecimento,
             ramal_energia=data.ramal_energia,
             data_projeto=data.data_projeto,
-            quantidade_sistemas_instalados=data.quantidade_sistemas_instalados,
-            sistema_instalado1=data.sistema_instalado1,
-            sistema_instalado2=data.sistema_instalado2,
-            sistema_instalado3=data.sistema_instalado3,
+            inversores=data.inversores,
+            placas=data.placas,
         )
 
     @staticmethod
     def _to_procuracao(data: ProjetoTodos) -> ProjetoProcuracao:
         return ProjetoProcuracao(
-            id_projeto=data.id_projeto,
+            id_projeto=None,
             cliente=data.cliente,
             endereco_cliente=data.endereco_cliente,
             endereco_obra=data.endereco_obra,
@@ -46,18 +45,16 @@ class AllDocsService:
         )
 
     @staticmethod
-    def _to_unifilar(data: ProjetoTodos) -> ProjetoUnifilar:
-        return ProjetoUnifilar(
+    def _to_unifilar_v2(data: ProjetoTodos) -> ProjetoUnifilarV2:
+        return ProjetoUnifilarV2(
             nome_projetista=data.nome_projetista,
             cft_crea_projetista=data.cft_crea_projetista,
             nome_cliente=data.cliente.nome_cliente,
-            quantidade_sistemas_instalados=data.quantidade_sistemas_instalados,
             disjuntor_geral_amperes=data.disjuntor_geral_amperes,
             tensao_local=data.tensao_local,
             endereco_obra=data.endereco_obra,
-            sistema_instalado1=data.sistema_instalado1,
-            sistema_instalado2=data.sistema_instalado2,
-            sistema_instalado3=data.sistema_instalado3,
+            inversores=data.inversores,
+            placas=data.placas,
         )
 
     @staticmethod
@@ -82,19 +79,19 @@ class AllDocsService:
         )
 
     @staticmethod
-    def generate_all(data: ProjetoTodos) -> BytesIO:
+    def generate_all(data: ProjetoTodos, session: Session) -> BytesIO:
         """
         Generates Memorial, Procuração, Diagrama Unifilar and Formulário ENEL-CE
         from a single payload and returns a ZIP BytesIO buffer.
         """
-        memorial_buf = DocsService.generate_memorial(
-            AllDocsService._to_memorial(data)
+        memorial_buf = DocsService.generate_memorial_v2(
+            AllDocsService._to_memorial_v2(data), session
         )
         procuracao_buf = DocsService.generate_procuracao(
             AllDocsService._to_procuracao(data)
         )
-        unifilar_buf = DocsService.generate_diagrama_unifilar(
-            AllDocsService._to_unifilar(data)
+        unifilar_buf = DocsService.generate_diagrama_unifilar_v2(
+            AllDocsService._to_unifilar_v2(data), session
         )
         formulario_buf = DocsService.generate_formulario_enel(
             AllDocsService._to_formulario(data)

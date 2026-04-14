@@ -1,9 +1,23 @@
 import pytest
+from types import SimpleNamespace
+
 from api.schemas.sistema.inversor import Inversor
 from api.schemas.sistema.placas import Placa
 from api.schemas.sistema.materiais import MaterialInversor, MaterialPlaca
-from src.schemas.modelreturnobject import ProjetoCompletoV2, Cliente, EnderecoObra
+from src.schemas.modelreturnobject import ProjetoCompletoV2
 from src.domain.creatememorialobject_v2 import ObjetosCalculadosV2, MemorialPresenterV2
+
+_MOCK_CLIENTE = SimpleNamespace(
+    id_cliente=1, nome_cliente="diego", cpf="123", rg="123",
+    telefone_cliente="123", email_cliente="12", data_nascimento="01",
+    razao_social="", nome_fantasia="", cnpj="",
+)
+
+_MOCK_ENDERECO_OBRA = SimpleNamespace(
+    logradouro_obra="", numero_obra="", complemento_obra="", cep_obra="",
+    bairro_obra="", cidade_obra="", estado_obra="",
+    latitude_obra="", longitude_obra="",
+)
 
 def _create_mock_projeto(inversores, placas):
     return ProjetoCompletoV2(
@@ -15,10 +29,10 @@ def _create_mock_projeto(inversores, placas):
         tipo_fornecimento="monofasico",
         ramal_energia="aéreo",
         data_projeto="2024",
-        cliente=Cliente(id_cliente=1, nome_cliente="diego", cpf="123", rg="123", telefone_cliente="123", email_cliente="12", data_nascimento="01", razao_social="", nome_fantasia="", cnpj=""),
-        endereco_obra=EnderecoObra(logradouro_obra="", numero_obra="", complemento_obra="", cep_obra="", bairro_obra="", cidade_obra="", estado_obra="", latitude_obra="", longitude_obra=""),
+        cliente=_MOCK_CLIENTE,
+        endereco_obra=_MOCK_ENDERECO_OBRA,
         inversores=inversores,
-        placas=placas
+        placas=placas,
     )
 
 def test_1_um_inversor_com_10_placas():
