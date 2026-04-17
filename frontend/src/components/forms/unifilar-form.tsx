@@ -106,7 +106,13 @@ export function UnifilarForm() {
                 {...register("cft_crea_projetista")}
               />
             </FormField>
+          </div>
+        </fieldset>
 
+        {/* Informações do Cliente */}
+        <fieldset className="form-section space-y-4">
+          <legend>Informações do Cliente</legend>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               label="Nome do Cliente"
               htmlFor="nome_cliente"

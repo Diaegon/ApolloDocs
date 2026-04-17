@@ -188,3 +188,7 @@ frontend/coverage/
 frontend/.turbo/
 INMETRO_INVERSORES/
 node_modules
+
+# Data files and scratch notes
+*.csv
+text-improve.txt
